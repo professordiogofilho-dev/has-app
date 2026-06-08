@@ -1,0 +1,2858 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#1a3a5c">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="HAS Guia">
+<link rel="manifest" href="manifest.json">
+<title>HAS Guia — Fluxograma de Tratamento</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --azul-escuro: #1a3a5c;
+  --azul-medio: #2563a8;
+  --azul-claro: #4a90d9;
+  --azul-fundo: #eaf2fb;
+  --vermelho-alerta: #c0392b;
+  --vermelho-claro: #fdf0ef;
+  --verde: #1a7a4a;
+  --verde-claro: #eaf7f0;
+  --amarelo: #f39c12;
+  --amarelo-claro: #fef9ec;
+  --cinza-escuro: #2d3748;
+  --cinza-medio: #718096;
+  --cinza-claro: #f7f8fa;
+  --branco: #ffffff;
+  --borda: #d1dbe8;
+  --sombra: 0 2px 12px rgba(26,58,92,0.10);
+  --sombra-forte: 0 4px 24px rgba(26,58,92,0.18);
+  --radius: 12px;
+  --radius-grande: 20px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  font-family: 'DM Sans', sans-serif;
+  background: var(--azul-fundo);
+  color: var(--cinza-escuro);
+  overflow-x: hidden;
+}
+
+/* ========== ALERTA LEGAL FIXO ========== */
+#alerta-legal {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: var(--vermelho-alerta);
+  color: white;
+  font-size: 10px;
+  font-weight: 500;
+  text-align: center;
+  padding: 6px 12px;
+  z-index: 9999;
+  line-height: 1.4;
+}
+
+/* ========== TELAS ========== */
+.tela {
+  display: none;
+  min-height: 100vh;
+  padding-bottom: 50px;
+  animation: fadeIn 0.3s ease;
+}
+.tela.ativa { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ========== MODAL AVISO INICIAL ========== */
+#modal-aviso {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+#modal-aviso.visivel { display: flex; }
+.modal-box {
+  background: white;
+  border-radius: var(--radius-grande);
+  padding: 28px 24px;
+  max-width: 440px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal-box h2 {
+  font-family: 'Source Serif 4', serif;
+  color: var(--vermelho-alerta);
+  font-size: 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-box p {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--cinza-escuro);
+  margin-bottom: 10px;
+}
+.modal-box .aviso-destaque {
+  background: var(--vermelho-claro);
+  border-left: 4px solid var(--vermelho-alerta);
+  border-radius: 6px;
+  padding: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--vermelho-alerta);
+  margin: 14px 0;
+}
+.btn-aceitar {
+  width: 100%;
+  background: var(--azul-escuro);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  font-family: 'DM Sans', sans-serif;
+}
+.btn-aceitar:active { transform: scale(0.98); }
+
+/* ========== HEADER ========== */
+.header {
+  background: linear-gradient(135deg, var(--azul-escuro) 0%, var(--azul-medio) 100%);
+  color: white;
+  padding: 20px 20px 24px;
+  text-align: center;
+  position: relative;
+}
+.header-logo {
+  font-family: 'Source Serif 4', serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+.header-sub {
+  font-size: 11px;
+  opacity: 0.75;
+  margin-top: 3px;
+  font-weight: 300;
+}
+.header-user {
+  position: absolute;
+  top: 18px; right: 18px;
+  font-size: 11px;
+  opacity: 0.8;
+  text-align: right;
+  max-width: 120px;
+}
+.btn-voltar {
+  position: absolute;
+  top: 18px; left: 18px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  color: white;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 13px;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ========== CONTAINERS ========== */
+.container { padding: 20px; max-width: 520px; margin: 0 auto; }
+
+/* ========== CARDS ========== */
+.card {
+  background: white;
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--sombra);
+}
+.card-titulo {
+  font-family: 'Source Serif 4', serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--azul-escuro);
+  margin-bottom: 14px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--azul-fundo);
+}
+.card-secao {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--azul-medio);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 16px 0 8px;
+}
+
+/* ========== FORMULÁRIOS ========== */
+.campo {
+  margin-bottom: 14px;
+}
+.campo label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cinza-escuro);
+  margin-bottom: 5px;
+}
+.campo label span.obrigatorio { color: var(--vermelho-alerta); }
+.campo input, .campo select {
+  width: 100%;
+  border: 1.5px solid var(--borda);
+  border-radius: 8px;
+  padding: 11px 13px;
+  font-size: 15px;
+  font-family: 'DM Sans', sans-serif;
+  color: var(--cinza-escuro);
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+  -webkit-appearance: none;
+}
+.campo input:focus, .campo select:focus { border-color: var(--azul-claro); }
+.campo .dica { font-size: 11px; color: var(--cinza-medio); margin-top: 4px; }
+
+/* PA input especial */
+.pa-row { display: flex; gap: 8px; align-items: center; }
+.pa-row input { text-align: center; font-size: 18px; font-weight: 600; }
+.pa-sep { font-size: 22px; font-weight: 300; color: var(--cinza-medio); }
+
+/* ========== CHECKBOXES ========== */
+.check-grupo { display: flex; flex-direction: column; gap: 8px; }
+.check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: var(--cinza-claro);
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: all 0.2s;
+}
+.check-item:active { transform: scale(0.99); }
+.check-item input[type=checkbox] { display: none; }
+.check-custom {
+  width: 20px; height: 20px;
+  border: 2px solid var(--borda);
+  border-radius: 5px;
+  flex-shrink: 0;
+  margin-top: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  background: white;
+}
+.check-item.marcado {
+  background: var(--azul-fundo);
+  border-color: var(--azul-claro);
+}
+.check-item.marcado .check-custom {
+  background: var(--azul-medio);
+  border-color: var(--azul-medio);
+}
+.check-item.marcado .check-custom::after {
+  content: '✓';
+  color: white;
+  font-size: 12px;
+  font-weight: 700;
+}
+.check-label { font-size: 13px; line-height: 1.5; color: var(--cinza-escuro); }
+.check-label strong { color: var(--azul-escuro); }
+.check-label small { display: block; color: var(--cinza-medio); font-size: 11px; margin-top: 2px; }
+
+/* ========== RADIO BUTTONS ========== */
+.radio-grupo { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-item {
+  flex: 1; min-width: 80px;
+  border: 1.5px solid var(--borda);
+  border-radius: 8px;
+  padding: 10px 8px;
+  text-align: center;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  background: white;
+  transition: all 0.2s;
+  color: var(--cinza-escuro);
+}
+.radio-item.selecionado {
+  background: var(--azul-escuro);
+  border-color: var(--azul-escuro);
+  color: white;
+}
+.radio-item input { display: none; }
+
+/* ========== BOTÕES ========== */
+.btn-primario {
+  width: 100%;
+  background: linear-gradient(135deg, var(--azul-escuro), var(--azul-medio));
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: var(--sombra);
+  transition: transform 0.15s;
+  margin-top: 4px;
+}
+.btn-primario:active { transform: scale(0.98); }
+.btn-secundario {
+  width: 100%;
+  background: white;
+  color: var(--azul-escuro);
+  border: 2px solid var(--azul-escuro);
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  margin-top: 8px;
+  transition: transform 0.15s;
+}
+.btn-secundario:active { transform: scale(0.98); }
+.btn-pdf {
+  width: 100%;
+  background: linear-gradient(135deg, var(--verde), #2ecc71);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  margin-top: 8px;
+  transition: transform 0.15s;
+}
+
+/* ========== BOAS VINDAS ========== */
+.boas-vindas-hero {
+  background: linear-gradient(155deg, var(--azul-escuro) 0%, var(--azul-medio) 60%, var(--azul-claro) 100%);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px 60px;
+  text-align: center;
+  color: white;
+}
+.bv-icone {
+  width: 80px; height: 80px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 24px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40px;
+  margin-bottom: 24px;
+  border: 2px solid rgba(255,255,255,0.25);
+}
+.bv-titulo {
+  font-family: 'Source Serif 4', serif;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.bv-subtitulo {
+  font-size: 14px;
+  opacity: 0.8;
+  line-height: 1.6;
+  max-width: 320px;
+  margin-bottom: 10px;
+}
+.bv-badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  padding: 6px 16px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+.bv-btn {
+  width: 100%; max-width: 320px;
+  background: white;
+  color: var(--azul-escuro);
+  border: none;
+  border-radius: var(--radius);
+  padding: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+  margin-bottom: 12px;
+}
+.bv-btn-sec {
+  background: transparent;
+  color: white;
+  border: 2px solid rgba(255,255,255,0.5);
+  width: 100%; max-width: 320px;
+  border-radius: var(--radius);
+  padding: 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: 'DM Sans', sans-serif;
+}
+
+/* ========== RESULTADO / CLASSIFICAÇÃO ========== */
+.resultado-card {
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.resultado-baixo { background: var(--verde-claro); border: 2px solid var(--verde); }
+.resultado-moderado { background: var(--amarelo-claro); border: 2px solid var(--amarelo); }
+.resultado-alto { background: #fff3e0; border: 2px solid #e65100; }
+.resultado-muito-alto { background: var(--vermelho-claro); border: 2px solid var(--vermelho-alerta); }
+.resultado-monoterapia { background: var(--azul-fundo); border: 2px solid var(--azul-medio); }
+
+.resultado-badge {
+  display: inline-block;
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+.badge-baixo { background: var(--verde); color: white; }
+.badge-moderado { background: var(--amarelo); color: white; }
+.badge-alto { background: #e65100; color: white; }
+.badge-muito-alto { background: var(--vermelho-alerta); color: white; }
+.badge-mono { background: var(--azul-medio); color: white; }
+
+.resultado-titulo {
+  font-family: 'Source Serif 4', serif;
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.resultado-desc { font-size: 13px; line-height: 1.6; }
+
+/* ========== ETAPAS DO FLUXOGRAMA ========== */
+.etapa {
+  background: white;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  overflow: hidden;
+  box-shadow: var(--sombra);
+}
+.etapa-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  cursor: pointer;
+  background: white;
+}
+.etapa-numero {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--azul-escuro);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.etapa-titulo-texto { font-size: 14px; font-weight: 600; color: var(--azul-escuro); flex: 1; }
+.etapa-chevron { font-size: 12px; color: var(--cinza-medio); transition: transform 0.2s; }
+.etapa.aberta .etapa-chevron { transform: rotate(180deg); }
+.etapa-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--borda);
+}
+.etapa.aberta .etapa-body { display: block; }
+
+/* ========== MEDICAMENTOS ========== */
+.med-classe {
+  background: var(--azul-fundo);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--azul-medio);
+}
+.med-classe-titulo {
+  font-family: 'Source Serif 4', serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--azul-escuro);
+  margin-bottom: 10px;
+}
+.med-classe-desc { font-size: 12px; color: var(--cinza-medio); margin-bottom: 12px; line-height: 1.5; }
+.med-item {
+  background: white;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border: 1px solid var(--borda);
+}
+.med-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+.med-nome { font-size: 14px; font-weight: 600; color: var(--azul-escuro); }
+.med-dose-resumo { font-size: 11px; color: var(--cinza-medio); margin-top: 2px; }
+.med-seta { font-size: 11px; color: var(--cinza-medio); }
+.med-detalhe {
+  display: none;
+  padding: 10px 12px;
+  border-top: 1px solid var(--borda);
+  background: var(--cinza-claro);
+}
+.med-item.aberto .med-detalhe { display: block; }
+.med-info-row { display: flex; gap: 6px; margin-bottom: 6px; align-items: flex-start; }
+.med-info-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--azul-medio);
+  min-width: 90px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding-top: 1px;
+}
+.med-info-val { font-size: 12px; color: var(--cinza-escuro); line-height: 1.5; flex: 1; }
+.med-alerta {
+  background: var(--vermelho-claro);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--vermelho-alerta);
+  font-weight: 500;
+  margin-top: 6px;
+}
+.med-ok {
+  background: var(--verde-claro);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 11px;
+  color: var(--verde);
+  font-weight: 500;
+  margin-top: 6px;
+}
+
+/* ========== OBSERVAÇÕES BB ========== */
+.obs-bb {
+  background: #fff8e1;
+  border: 1px solid #ffe082;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 12px;
+  color: #5d4037;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+.obs-bb strong { color: #e65100; }
+
+/* ========== INFO BOXES ========== */
+.info-box {
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+.info-box.azul { background: var(--azul-fundo); border-left: 3px solid var(--azul-medio); color: var(--azul-escuro); }
+.info-box.verde { background: var(--verde-claro); border-left: 3px solid var(--verde); color: #1a5c3a; }
+.info-box.amarelo { background: var(--amarelo-claro); border-left: 3px solid var(--amarelo); color: #7d5a00; }
+.info-box.vermelho { background: var(--vermelho-claro); border-left: 3px solid var(--vermelho-alerta); color: var(--vermelho-alerta); }
+
+/* ========== PERFIL ========== */
+.perfil-avatar {
+  width: 64px; height: 64px;
+  background: var(--azul-fundo);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px;
+  margin: 0 auto 12px;
+  border: 3px solid var(--azul-claro);
+}
+.perfil-nome { text-align: center; font-family: 'Source Serif 4', serif; font-size: 20px; font-weight: 700; color: var(--azul-escuro); }
+.perfil-prof { text-align: center; font-size: 13px; color: var(--cinza-medio); margin-top: 2px; margin-bottom: 16px; }
+.perfil-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--borda); font-size: 13px; }
+.perfil-item:last-child { border-bottom: none; }
+.perfil-item span:first-child { color: var(--cinza-medio); }
+.perfil-item span:last-child { font-weight: 500; color: var(--cinza-escuro); }
+
+/* ========== INDICADOR PROGRESSO ========== */
+.progresso { display: flex; gap: 4px; justify-content: center; padding: 12px 0; }
+.prog-passo {
+  height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.3);
+  transition: all 0.3s;
+}
+.prog-passo.ativo { background: white; flex: 2; }
+.prog-passo.concluido { background: rgba(255,255,255,0.7); }
+
+/* ========== TAGS ========== */
+.tag {
+  display: inline-block;
+  border-radius: 12px;
+  padding: 3px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  margin: 2px;
+}
+.tag-sim { background: var(--verde); color: white; }
+.tag-nao { background: var(--cinza-claro); color: var(--cinza-medio); border: 1px solid var(--borda); }
+.tag-destaque { background: var(--azul-escuro); color: white; }
+
+/* ========== SUMÁRIO PACIENTE ========== */
+.sumario-linha { display: flex; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+.sumario-label { color: var(--cinza-medio); min-width: 120px; }
+.sumario-valor { color: var(--cinza-escuro); font-weight: 500; flex: 1; }
+
+/* ========== RESUMO RECOLHÍVEL ========== */
+.resumo-body { transition: all 0.2s; }
+.resumo-body.oculto { display: none; }
+
+/* ========== SEPARADOR ========== */
+.separador { height: 1px; background: var(--borda); margin: 16px 0; }
+
+/* ========== RESPONSIVO ========== */
+/* ========== RESPONSIVO MOBILE ========== */
+@media(max-width: 480px) {
+  .bv-titulo { font-size: 26px; }
+  .container { padding: 14px; }
+  .radio-item { font-size: 13px; padding: 12px 8px; min-height: 48px; display: flex; align-items: center; justify-content: center; }
+  .btn-primario, .btn-secundario, .btn-pdf { padding: 18px; font-size: 16px; min-height: 54px; }
+  .btn-aceitar { padding: 16px; min-height: 52px; }
+  .campo input, .campo select { padding: 14px 13px; font-size: 16px; min-height: 50px; }
+  .pa-row input { font-size: 20px; min-height: 54px; }
+  .check-item { padding: 13px 12px; min-height: 52px; }
+  .check-custom { width: 24px; height: 24px; flex-shrink: 0; }
+  .etapa-header { padding: 16px; min-height: 56px; }
+  .etapa-numero { width: 36px; height: 36px; font-size: 15px; }
+  .etapa-titulo-texto { font-size: 13px; }
+  .med-item-header { padding: 14px 12px; min-height: 56px; }
+  .med-nome { font-size: 14px; }
+  .card { padding: 16px; }
+  .card-titulo { font-size: 15px; }
+  .header-logo { font-size: 18px; }
+  .perfil-avatar { width: 56px; height: 56px; font-size: 24px; }
+}
+
+@media(max-width: 360px) {
+  .bv-titulo { font-size: 22px; }
+  .container { padding: 12px; }
+  .radio-grupo { flex-direction: column; }
+  .radio-item { min-height: 48px; }
+}
+
+/* iOS safe area (notch/home bar) */
+@supports(padding: max(0px)) {
+  #alerta-legal { padding-bottom: max(6px, env(safe-area-inset-bottom)); }
+  .tela { padding-bottom: max(50px, calc(50px + env(safe-area-inset-bottom))); }
+}
+</style>
+</head>
+<body>
+
+<!-- HAS Guia v2.4 -->
+<div id="alerta-legal">
+  ⚠️ Este aplicativo é uma ferramenta de apoio. NÃO substitui consulta médica. Somente o médico pode diagnosticar e prescrever. Os desenvolvedores não se responsabilizam por uso indevido.
+</div>
+
+<!-- MODAL AVISO OBRIGATÓRIO -->
+<div id="modal-aviso" class="visivel">
+  <div class="modal-box">
+    <h2>⚕️ Aviso Importante</h2>
+    <p>Este aplicativo é uma ferramenta educacional de apoio ao profissional de saúde, baseada nas diretrizes vigentes de tratamento da hipertensão arterial.</p>
+    <div class="aviso-destaque">
+      🚫 O uso deste aplicativo NÃO substitui, em hipótese alguma, a consulta médica — único procedimento capaz de realizar diagnóstico e indicar tratamento individualizado.
+    </div>
+    <p>A prescrição de medicamentos anti-hipertensivos é ato médico privativo, que exige avaliação clínica completa, exames complementares e relacionamento médico-paciente.</p>
+    <p>Os desenvolvedores deste aplicativo <strong>não se responsabilizam</strong> por qualquer uso inadequado das informações aqui apresentadas, nem por decisões clínicas baseadas exclusivamente nestas orientações.</p>
+    <p>Ao continuar, você declara ser profissional de saúde e compreender os limites de uso deste aplicativo.</p>
+    <button class="btn-aceitar" onclick="aceitarAviso()">✅ Compreendo e Concordo — Continuar</button>
+  </div>
+</div>
+
+<!-- ===================== TELA 0: BOAS VINDAS ===================== -->
+<div id="tela-inicio" class="tela ativa">
+  <div class="boas-vindas-hero">
+    <div class="bv-icone">🫀</div>
+    <div class="bv-titulo">HAS Guia</div>
+    <div class="bv-subtitulo">Guia de apoio ao tratamento da Hipertensão Arterial para profissionais de saúde</div>
+    <button class="bv-btn" onclick="irPara('tela-cadastro')">Criar meu perfil</button>
+    <button class="bv-btn-sec" onclick="verificarLogin()">Já tenho perfil → Entrar</button>
+    <div style="margin-top:24px; font-size:11px; opacity:0.5; max-width:280px; line-height:1.6;">
+      Seus dados ficam apenas neste dispositivo. Nenhuma informação é enviada a servidores.
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TELA 1: CADASTRO ===================== -->
+<div id="tela-cadastro" class="tela">
+  <div class="header">
+    <button class="btn-voltar" onclick="irPara('tela-inicio')">← Voltar</button>
+    <div class="header-logo">HAS Guia</div>
+    <div class="header-sub">Criando seu perfil profissional</div>
+    <div class="progresso">
+      <div class="prog-passo ativo"></div>
+      <div class="prog-passo"></div>
+      <div class="prog-passo"></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="card-titulo">👤 Dados Profissionais</div>
+      <p style="font-size:12px; color:var(--cinza-medio); margin-bottom:16px;">Estes dados ficam apenas neste dispositivo e são usados somente para personalização.</p>
+
+      <div class="campo">
+        <label>Nome completo <span class="obrigatorio">*</span></label>
+        <input type="text" id="cad-nome" placeholder="Ex: Dr. João da Silva" autocomplete="name">
+      </div>
+      <div class="campo">
+        <label>E-mail <span class="obrigatorio">*</span></label>
+        <input type="email" id="cad-email" placeholder="seu@email.com" autocomplete="email">
+      </div>
+      <div class="campo">
+        <label>Profissão <span class="obrigatorio">*</span></label>
+        <select id="cad-profissao">
+          <option value="">Selecione sua profissão</option>
+          <option value="Médico(a)">Médico(a)</option>
+          <option value="Enfermeiro(a)">Enfermeiro(a)</option>
+          <option value="Farmacêutico(a)">Farmacêutico(a)</option>
+          <option value="Dentista">Dentista</option>
+          <option value="Fisioterapeuta">Fisioterapeuta</option>
+          <option value="Outro profissional de saúde">Outro profissional de saúde</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label>Inscrição profissional <span class="obrigatorio">*</span></label>
+        <input type="text" id="cad-inscricao" placeholder="Ex: CRM 12345/SP ou COREN 67890">
+        <div class="dica">CRM, COREN, CFF, CRO, CREFITO etc.</div>
+      </div>
+    </div>
+
+    <div class="info-box azul">
+      🔒 Seus dados são armazenados <strong>apenas neste dispositivo</strong>, nunca em servidores. Você pode excluí-los a qualquer momento.
+    </div>
+
+    <button class="btn-primario" onclick="salvarCadastro()">Criar meu perfil →</button>
+  </div>
+</div>
+
+<!-- ===================== TELA 2: HOME ===================== -->
+<div id="tela-home" class="tela">
+  <div class="header">
+    <div class="header-logo">HAS Guia 🫀</div>
+    <div class="header-sub">Guia de Tratamento da Hipertensão Arterial</div>
+    <div class="header-user" id="home-usuario"></div>
+  </div>
+  <div class="container">
+
+    <div style="background:var(--azul-escuro);border-radius:12px;padding:14px 16px;margin-bottom:16px;text-align:center;">
+      <div style="font-size:10px;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:6px;">🔒 Licença de uso pessoal</div>
+      <div style="font-size:14px;font-weight:700;color:#ffffff;margin-bottom:2px;" id="licenca-nome">—</div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.7);margin-bottom:10px;" id="licenca-email">—</div>
+      <div style="font-size:10px;color:rgba(255,255,255,0.55);line-height:1.6;border-top:1px solid rgba(255,255,255,0.15);padding-top:8px;">
+        Este aplicativo é de uso pessoal e intransferível. A cessão, cópia ou redistribuição não autorizada configura violação de direitos autorais, sujeita às sanções civis e penais previstas na Lei nº 9.610/1998.
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo">🩺 Nova Avaliação</div>
+      <p style="font-size:13px; color:var(--cinza-medio); margin-bottom:16px;">Insira os dados do paciente para classificação e orientação terapêutica de acordo com as diretrizes vigentes.</p>
+      <button class="btn-primario" onclick="iniciarAvaliacao()">Iniciar avaliação do paciente →</button>
+    </div>
+
+    <div class="card" style="cursor:pointer;" onclick="irPara('tela-perfil')">
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div style="font-size:28px;">👤</div>
+        <div>
+          <div style="font-size:14px; font-weight:600; color:var(--azul-escuro);" id="home-nome-card"></div>
+          <div style="font-size:12px; color:var(--cinza-medio);" id="home-prof-card"></div>
+        </div>
+        <div style="margin-left:auto; color:var(--cinza-medio);">›</div>
+      </div>
+    </div>
+
+    <div class="info-box vermelho">
+      <strong>⚠️ Lembrete importante:</strong> Este aplicativo é ferramenta de apoio educacional. Não substitui a consulta médica. A prescrição é ato médico privativo.
+    </div>
+  </div>
+</div>
+
+<!-- ===================== TELA 3: DADOS DO PACIENTE - PASSO 1 ===================== -->
+<div id="tela-passo1" class="tela">
+  <div class="header">
+    <button class="btn-voltar" onclick="irPara('tela-home')">← Sair</button>
+    <div class="header-logo">Dados do Paciente</div>
+    <div class="header-sub">Passo 1 de 4 — Pressão Arterial e Perfil</div>
+    <div class="progresso">
+      <div class="prog-passo ativo"></div>
+      <div class="prog-passo"></div>
+      <div class="prog-passo"></div>
+      <div class="prog-passo"></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="card-titulo">📊 Pressão Arterial (consultório)</div>
+      <p style="font-size:12px; color:var(--cinza-medio); margin-bottom:14px;">Média de pelo menos 2 medidas em 2 ou mais visitas. Use o valor mais elevado (sistólica ou diastólica).</p>
+      <div class="campo">
+        <label>PAS / PAD (mmHg) <span class="obrigatorio">*</span></label>
+        <div class="pa-row">
+          <input type="number" id="pas" placeholder="PAS" min="60" max="300" inputmode="numeric">
+          <div class="pa-sep">/</div>
+          <input type="number" id="pad" placeholder="PAD" min="40" max="200" inputmode="numeric">
+        </div>
+        <div class="dica">PAS = Pressão sistólica (número maior) / PAD = Pressão diastólica (número menor)</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo">👴 Perfil do Paciente</div>
+
+      <div class="campo">
+        <label>Idade <span class="obrigatorio">*</span></label>
+        <input type="number" id="idade" placeholder="Ex: 58" min="18" max="120" inputmode="numeric" oninput="verificarIdadeGestacao()">
+      </div>
+
+      <div class="campo">
+        <label>Sexo <span class="obrigatorio">*</span></label>
+        <div class="radio-grupo" id="rg-sexo">
+          <div class="radio-item" onclick="selecionarRadio('rg-sexo', 'M', this)">
+            <input type="radio" name="sexo" value="M">Masculino
+          </div>
+          <div class="radio-item" onclick="selecionarRadio('rg-sexo', 'F', this)">
+            <input type="radio" name="sexo" value="F">Feminino
+          </div>
+        </div>
+      </div>
+
+      <div class="campo" id="campo-potencial-gestacao" style="display:none;">
+        <label>Potencial gestacional</label>
+        <div class="radio-grupo" id="rg-gestacao">
+          <div class="radio-item" onclick="selecionarRadio('rg-gestacao', 'sim', this)">
+            <input type="radio" name="gestacao" value="sim">Sim (pode engravidar)
+          </div>
+          <div class="radio-item" onclick="selecionarRadio('rg-gestacao', 'nao', this)">
+            <input type="radio" name="gestacao" value="nao">Não
+          </div>
+        </div>
+      </div>
+
+      <div class="campo">
+        <label>Condições especiais</label>
+        <div class="check-grupo">
+          <label class="check-item" onclick="toggleCheck(this)">
+            <input type="checkbox" id="chk-fragil">
+            <div class="check-custom"></div>
+            <div class="check-label">
+              <strong>Paciente frágil</strong>
+              <small>Idoso com limitações funcionais, multimorbidade, polifarmácia</small>
+            </div>
+          </label>
+          <label class="check-item" onclick="toggleCheck(this)">
+            <input type="checkbox" id="chk-hipotensao-ortost">
+            <div class="check-custom"></div>
+            <div class="check-label">
+              <strong>Hipotensão ortostática sintomática</strong>
+              <small>Queda de PA ao levantar com sintomas</small>
+            </div>
+          </label>
+          <label class="check-item" onclick="toggleCheck(this)">
+            <input type="checkbox" id="chk-hemodialise">
+            <div class="check-custom"></div>
+            <div class="check-label">
+              <strong>Em hemodiálise (DRC dialítica)</strong>
+              <small>Doença renal crônica em diálise — influencia escolha de anti-hipertensivos</small>
+            </div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-primario" onclick="avancarPasso1()">Próximo →</button>
+  </div>
+</div>
+
+<!-- ===================== TELA 4: PASSO 2 — FATORES DE RISCO ===================== -->
+<div id="tela-passo2" class="tela">
+  <div class="header">
+    <button class="btn-voltar" onclick="irPara('tela-passo1')">← Voltar</button>
+    <div class="header-logo">Fatores de Risco CV</div>
+    <div class="header-sub">Passo 2 de 4 — Marque os presentes</div>
+    <div class="progresso">
+      <div class="prog-passo concluido"></div>
+      <div class="prog-passo ativo"></div>
+      <div class="prog-passo"></div>
+      <div class="prog-passo"></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="info-box azul">
+      Marque todos os fatores de risco cardiovascular presentes neste paciente. Eles serão usados para calcular o risco CV e determinar a estratégia terapêutica.
+    </div>
+    <div class="card">
+      <div class="card-titulo">⚠️ Fatores de Risco Cardiovascular</div>
+      <div class="check-grupo">
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="fr-tabagismo">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Tabagismo atual</strong><small>Uso de cigarro, narguilê ou derivados</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="fr-dislipidemia">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Dislipidemia</strong><small>LDLc ≥ 100 mg/dL e/ou HDLc ≤ 40 (H) ou ≤ 50 (M) mg/dL e/ou TG > 150 mg/dL</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="fr-obesidade">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Obesidade</strong><small>IMC ≥ 30 kg/m²</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="fr-hf-prematura">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>DCV prematura em familiar de 1º grau</strong><small>Homens &lt; 55 anos ou mulheres &lt; 65 anos</small></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo">🫘 Diabetes Mellitus</div>
+      <div class="campo">
+        <label>O paciente tem Diabetes Mellitus diagnosticado?</label>
+        <div class="radio-grupo" id="rg-dm">
+          <div class="radio-item" onclick="selecionarRadio('rg-dm', 'sim', this)">Sim</div>
+          <div class="radio-item" onclick="selecionarRadio('rg-dm', 'nao', this)">Não</div>
+        </div>
+        <div class="dica">Glicemia jejum ≥ 126 mg/dL e/ou HbA1c ≥ 6,5%</div>
+      </div>
+    </div>
+
+    <button class="btn-primario" onclick="avancarPasso2()">Próximo →</button>
+    <button class="btn-secundario" onclick="irPara('tela-passo1')">← Voltar</button>
+  </div>
+</div>
+
+<!-- ===================== TELA 5: PASSO 3 — LOA E DCV ===================== -->
+<div id="tela-passo3" class="tela">
+  <div class="header">
+    <button class="btn-voltar" onclick="irPara('tela-passo2')">← Voltar</button>
+    <div class="header-logo">LOA e Comorbidades</div>
+    <div class="header-sub">Passo 3 de 4 — Lesões e Doenças</div>
+    <div class="progresso">
+      <div class="prog-passo concluido"></div>
+      <div class="prog-passo concluido"></div>
+      <div class="prog-passo ativo"></div>
+      <div class="prog-passo"></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="card-titulo">🫀 Doença Cardiovascular Estabelecida</div>
+      <p style="font-size:12px; color:var(--cinza-medio); margin-bottom:12px;">Diagnóstico confirmado de qualquer das condições abaixo. Marque todas que se aplicam:</p>
+      <div class="check-grupo">
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="dcv-coronariana">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Doença arterial coronariana (DAC)</strong><small>Angina, pós-IAM, revascularização miocárdica</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="cc-angina">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Angina / pós-IAM (sem DAC confirmada por exame)</strong><small>Angina estável ou instável, IAM prévio sem cineangiocoronariografia</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="dcv-ic">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Insuficiência cardíaca (IC) — fração de ejeção não especificada</strong><small>Diagnóstico clínico sem ecocardiograma disponível</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="cc-icfer">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>IC com fração de ejeção reduzida — ICFEr</strong><small>FE &lt; 40% confirmada por ecocardiograma. Atenção: BCC não di-hidropiridínico contraindicado</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="dcv-avc">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>AVC / AIT prévio</strong><small>Acidente vascular cerebral ou isquêmico transitório</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheckFA(this)">
+          <input type="checkbox" id="dcv-fa">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Fibrilação atrial (FA)</strong><small>Paroxística, persistente ou permanente</small></div>
+        </label>
+        <!-- Sub-pergunta FA: aparece ao marcar FA -->
+        <div id="campo-fa-controle" style="display:none; margin-left:32px; margin-top:-4px; margin-bottom:4px;">
+          <div style="background:var(--azul-fundo);border-left:3px solid var(--azul-claro);border-radius:0 8px 8px 0;padding:10px 12px;">
+            <div style="font-size:12px;font-weight:600;color:var(--azul-escuro);margin-bottom:8px;">Há necessidade de controle da frequência cardíaca?</div>
+            <div class="radio-grupo" id="rg-fa-controle" style="gap:6px;">
+              <div class="radio-item" style="font-size:12px;padding:8px;" onclick="selecionarRadio('rg-fa-controle','sim',this)">Sim</div>
+              <div class="radio-item" style="font-size:12px;padding:8px;" onclick="selecionarRadio('rg-fa-controle','nao',this)">Não</div>
+            </div>
+            <div style="font-size:10px;color:var(--cinza-medio);margin-top:6px;">Se sim: indica betabloqueador ou BCC não di-hidropiridínico (se não houver ICFEr)</div>
+          </div>
+        </div>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="dcv-daop">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Doença arterial obstrutiva periférica</strong><small>ITB &lt; 0,9 ou claudicação intermitente</small></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo">🫁 Lesão de Órgão-Alvo (LOA)</div>
+      <p style="font-size:12px; color:var(--cinza-medio); margin-bottom:12px;">Confirmada por exame clínico ou complementar:</p>
+      <div class="check-grupo">
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="loa-hve">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Hipertrofia ventricular esquerda (HVE)</strong><small>ECG: Sokolow-Lyon >35 mm ou Cornell >28mm(H)/20mm(M) | ECO: IMVE ≥116(H) ou ≥96(M) g/m²</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="loa-albuminuria">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Albuminúria / proteinúria</strong><small>Albuminúria ≥ 30 mg/24h ou RAC ≥ 30 mg/g</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="loa-itb">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>ITB alterado</strong><small>Índice tornozelo-braquial &lt; 0,9</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="loa-carotida">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Placa carotídea</strong><small>Confirmada por USG de carótidas</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="loa-vop">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Rigidez arterial aumentada</strong><small>VOP carotídeo-femoral ≥ 10 m/s</small></div>
+        </label>
+        <label class="check-item" onclick="toggleCheck(this)">
+          <input type="checkbox" id="loa-retinopatia">
+          <div class="check-custom"></div>
+          <div class="check-label"><strong>Retinopatia hipertensiva</strong><small>Confirmada por fundo de olho (KWB)</small></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-titulo">🫘 Doença Renal Crônica (DRC)</div>
+      <div class="campo">
+        <label>Estágio da DRC (KDIGO)</label>
+        <select id="drc-estagio">
+          <option value="nenhum">Sem DRC conhecida</option>
+          <option value="G1G2">G1-G2 (TFGe ≥ 60 mL/min) — apenas com albuminúria</option>
+          <option value="G3a">G3a (TFGe 45-59 mL/min) — LOA</option>
+          <option value="G3b">G3b (TFGe 30-44 mL/min) — LOA</option>
+          <option value="G4">G4 (TFGe 15-29 mL/min) — DCV estabelecida</option>
+          <option value="G5">G5 (TFGe &lt; 15 mL/min ou diálise) — DCV estabelecida</option>
+        </select>
+        <div class="dica">Estágios G3a e G3b = LOA | Estágios G4 e G5 = DCV estabelecida (conforme Quadro 4.6)</div>
+      </div>
+    </div>
+
+    <button class="btn-primario" onclick="avancarPasso3()">Próximo →</button>
+    <button class="btn-secundario" onclick="irPara('tela-passo2')">← Voltar</button>
+  </div>
+</div>
+
+<!-- ===================== TELA 6: PASSO 4 — RISCO E CONFIRMAÇÃO ===================== -->
+<div id="tela-passo4" class="tela">
+  <div class="header">
+    <button class="btn-voltar" onclick="irPara('tela-passo3')">← Voltar</button>
+    <div class="header-logo">Risco e Confirmação</div>
+    <div class="header-sub">Passo 4 de 4 — Revisar e Classificar</div>
+    <div class="progresso">
+      <div class="prog-passo concluido"></div>
+      <div class="prog-passo concluido"></div>
+      <div class="prog-passo concluido"></div>
+      <div class="prog-passo ativo"></div>
+    </div>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="card-titulo">📊 Escore PREVENT (AHA)</div>
+      <p style="font-size:12px; color:var(--cinza-medio); margin-bottom:12px;">A Diretriz 2025 recomenda o uso do escore PREVENT para estimativa do risco de DCV aterosclerótica em 10 anos. Se disponível, informe o resultado:</p>
+      <div class="campo">
+        <label>Resultado do PREVENT (% em 10 anos)</label>
+        <input type="number" id="prevent-score" placeholder="Ex: 15 (deixe em branco se não calculado)" min="0" max="100" step="0.1" inputmode="decimal">
+        <div class="dica">Calculadora disponível em: professional.heart.org | Baixo &lt;5% | Limítrofe 5-7,5% | Intermediário 7,5-20% | Alto ≥20%</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-sumario">
+      <div class="card-titulo">📋 Resumo dos Dados Inseridos</div>
+      <div id="sumario-conteudo"></div>
+    </div>
+
+    <button class="btn-primario" onclick="classificarPaciente()">🔍 Classificar e Ver Conduta →</button>
+    <button class="btn-secundario" onclick="irPara('tela-passo3')">← Revisar dados</button>
+  </div>
+</div>
+
+<!-- ===================== TELA 7: RESULTADO ===================== -->
+<div id="tela-resultado" class="tela">
+  <div class="header">
+    <button class="btn-voltar" onclick="irPara('tela-home')">← Nova avaliação</button>
+    <div class="header-logo">Resultado</div>
+    <div class="header-sub">Classificação e Conduta Terapêutica</div>
+  </div>
+  <div class="container">
+    <div id="resultado-classificacao"></div>
+    <div id="resultado-resumo-dados"></div>
+    <div id="resultado-conduta"></div>
+    <div id="resultado-medicamentos"></div>
+
+    <div class="info-box vermelho" style="margin-top:16px;">
+      <strong>⚠️ AVISO LEGAL:</strong> As orientações acima têm caráter exclusivamente educacional e de apoio ao profissional de saúde. A decisão terapêutica final é responsabilidade do médico assistente, após avaliação clínica completa e individualizada do paciente. Os desenvolvedores deste aplicativo não se responsabilizam por decisões tomadas com base nestas informações.
+    </div>
+
+    <button class="btn-pdf" onclick="gerarPDF()">📄 Exportar relatório em PDF</button>
+    <button class="btn-primario" onclick="irPara('tela-home')" style="margin-top:8px;">🔄 Nova Avaliação</button>
+  </div>
+</div>
+
+<!-- ===================== TELA 8: PERFIL ===================== -->
+<div id="tela-perfil" class="tela">
+  <div class="header">
+    <button class="btn-voltar" onclick="irPara('tela-home')">← Voltar</button>
+    <div class="header-logo">Meu Perfil</div>
+    <div class="header-sub">Dados profissionais</div>
+  </div>
+  <div class="container">
+    <div class="card">
+      <div class="perfil-avatar" id="perfil-avatar">👤</div>
+      <div class="perfil-nome" id="perfil-nome"></div>
+      <div class="perfil-prof" id="perfil-prof"></div>
+      <div class="separador"></div>
+      <div class="perfil-item"><span>E-mail</span><span id="perfil-email"></span></div>
+      <div class="perfil-item"><span>Inscrição</span><span id="perfil-inscricao"></span></div>
+      <div class="separador"></div>
+      <div class="info-box azul">🔒 Seus dados são armazenados apenas neste dispositivo e nunca são enviados a servidores externos.</div>
+    </div>
+    <button class="btn-secundario" onclick="excluirPerfil()" style="border-color:var(--vermelho-alerta); color:var(--vermelho-alerta);">🗑️ Excluir meu perfil</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// BANCO DE DADOS DE MEDICAMENTOS — Diretriz Brasileira HAS 2025
+// ============================================================
+const MEDICAMENTOS = {
+  diureticos_tiazidicos: {
+    classe: "Diuréticos Tiazídicos e Similares",
+    sigla: "DIU",
+    mecanismo: "Inibem a reabsorção de sódio no túbulo contornado distal. No longo prazo, diminuem a resistência periférica.",
+    medicamentos: [
+      {
+        nome: "Hidroclorotiazida",
+        dose: "12,5–50 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Hipopotassemia, hiperglicemia, hiperuricemia, dislipidemia, hiponatremia",
+        contraindicacoes: "Gota ativa, insuficiência renal grave (TFGe < 30 mL/min)",
+        observacoes: "Doses maiores aumentam efeitos diuréticos mas também os efeitos metabólicos, sem acrescentar efeito anti-hipertensivo adicional. Se não houver controle com TIAZ, IECA/BRA e BCC, substituir por clortalidona ou indapamida.",
+        sus: true
+      },
+      {
+        nome: "Clortalidona",
+        dose: "12,5–25 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à hidroclorotiazida, porém maior duração de ação",
+        contraindicacoes: "Gota ativa, insuficiência renal grave",
+        observacoes: "Preferida em relação à hidroclorotiazida por evidências de maior redução de desfechos cardiovasculares. Meia-vida longa.",
+        sus: false
+      },
+      {
+        nome: "Indapamida (SR)",
+        dose: "1,5–3,0 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Menores efeitos metabólicos que a hidroclorotiazida",
+        contraindicacoes: "Gota ativa",
+        observacoes: "Similar à clortalidona em evidências. Apresentação de liberação lenta (SR) preferida.",
+        sus: false
+      }
+    ]
+  },
+  diureticos_alca: {
+    classe: "Diuréticos de Alça",
+    sigla: "DIU-alça",
+    mecanismo: "Ação no ramo ascendente espesso da alça de Henle. Potente natriurese.",
+    medicamentos: [
+      {
+        nome: "Furosemida",
+        dose: "20–240 mg/dia",
+        frequencia: "1 a 3x ao dia",
+        efeitosColaterais: "Hipopotassemia intensa, hipovolemia, hiponatremia, hipomagnesemia, ototoxicidade em doses altas",
+        contraindicacoes: "Anúria",
+        observacoes: "Reservada para pacientes com DRC avançada (TFGe < 30), insuficiência cardíaca com edema e estados edematosos com retenção de sódio e água. Não é o diurético de escolha para HAS sem comorbidades.",
+        sus: true
+      }
+    ]
+  },
+  diureticos_poupadores: {
+    classe: "Diuréticos Poupadores de Potássio / Antagonistas Mineralocorticoides",
+    sigla: "ARM",
+    mecanismo: "Antagonistas dos receptores mineralocorticoides. Bloqueio da ação da aldosterona.",
+    medicamentos: [
+      {
+        nome: "Espironolactona",
+        dose: "25–100 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Hiperpotassemia (especialmente em DRC + IECA/BRA), ginecomastia, diminuição da libido, impotência, irregularidade menstrual",
+        contraindicacoes: "Hiperpotassemia (K+ > 5,5 mEq/L), insuficiência renal grave, gravidez. Cautela: associação com IECA ou BRA",
+        observacoes: "4º medicamento de escolha na HA resistente e refratária. Indicada em IC, hiperaldosteronismo, HA com comorbidades. Diminui proteinúria.",
+        sus: true
+      },
+      {
+        nome: "Eplerenona",
+        dose: "25–100 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Hiperpotassemia (similar à espironolactona), porém menor ocorrência de efeitos hormonais",
+        contraindicacoes: "Semelhantes à espironolactona",
+        observacoes: "Antagonista mais seletivo para receptores de aldosterona, com menor incidência de efeitos adversos hormonais. Indicada quando há efeitos colaterais persistentes com espironolactona.",
+        sus: false
+      },
+      {
+        nome: "Amilorida",
+        dose: "2,5–5 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Hiperpotassemia, hiponatremia",
+        contraindicacoes: "Hiperpotassemia, DRC avançada",
+        observacoes: "Ação nos canais de sódio do túbulo distal e coletor. Geralmente usada em associação com diurético tiazídico.",
+        sus: false
+      }
+    ]
+  },
+  bcc: {
+    classe: "Bloqueadores de Canais de Cálcio (BCC)",
+    sigla: "BCC",
+    mecanismo: "Bloqueiam os canais lentos de cálcio, diminuindo o influxo de cálcio nas células musculares lisas vasculares e a resistência vascular periférica.",
+    medicamentos: [
+      {
+        nome: "Anlodipino",
+        dose: "2,5–10 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Edema de membros inferiores (dose-dependente), cefaleia, rubor facial, taquicardia reflexa (raro)",
+        contraindicacoes: "ICFEr (relativo), taquiarritmias",
+        observacoes: "BCC di-hidropiridínico. Edema melhora com associação a bloqueador do SRAA (IECA ou BRA), não responde bem a diuréticos. Muito utilizado e bem estudado.",
+        sus: true
+      },
+      {
+        nome: "Felodipino",
+        dose: "2,5–10 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes ao anlodipino",
+        contraindicacoes: "ICFEr, taquiarritmias",
+        observacoes: "BCC di-hidropiridínico. Perfil semelhante ao anlodipino.",
+        sus: false
+      },
+      {
+        nome: "Nifedipino",
+        dose: "10–60 mg/dia",
+        frequencia: "1 a 3x ao dia",
+        efeitosColaterais: "Edema, cefaleia, rubor, taquicardia reflexa",
+        contraindicacoes: "ICFEr, taquiarritmias. Evitar forma de liberação imediata para HA crônica",
+        observacoes: "Preferir formulações de liberação lenta. Evitar o uso de cápsulas de liberação imediata no tratamento crônico da HAS.",
+        sus: true
+      },
+      {
+        nome: "Nitrendipino",
+        dose: "10–30 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes a outros BCCs di-hidropiridínicos",
+        contraindicacoes: "ICFEr",
+        observacoes: "BCC di-hidropiridínico. Estudo Syst-Eur demonstrou redução de AVC em idosos.",
+        sus: false
+      },
+      {
+        nome: "Manidipino",
+        dose: "10–20 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes a outros BCCs di-hidropiridínicos, menor edema",
+        contraindicacoes: "ICFEr",
+        observacoes: "BCC di-hidropiridínico com menor incidência de edema.",
+        sus: false
+      },
+      {
+        nome: "Lacidipino",
+        dose: "2–6 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Cefaleia, rubor, edema (menor frequência)",
+        contraindicacoes: "ICFEr",
+        observacoes: "BCC di-hidropiridínico.",
+        sus: false
+      },
+      {
+        nome: "Lercanidipino",
+        dose: "10–20 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Menor incidência de edema em relação ao anlodipino",
+        contraindicacoes: "ICFEr",
+        observacoes: "BCC di-hidropiridínico. Boa alternativa quando há edema com anlodipino.",
+        sus: false
+      },
+      {
+        nome: "Levanlodipino",
+        dose: "2,5–5 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes ao anlodipino",
+        contraindicacoes: "ICFEr",
+        observacoes: "S-enantiômero do anlodipino.",
+        sus: false
+      },
+      {
+        nome: "Verapamil",
+        dose: "120–360 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Bradicardia, bloqueio AV, constipação intestinal, edema",
+        contraindicacoes: "ICFEr, bradicardia (FC < 50 bpm), bloqueio AV > 1º grau, associação com betabloqueadores",
+        observacoes: "BCC não di-hidropiridínico (fenilalquilamina). Evitar associação com BBs. Pouco utilizado atualmente no tratamento da HA.",
+        sus: true
+      },
+      {
+        nome: "Diltiazem",
+        dose: "80–240 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Bradicardia, bloqueio AV, edema",
+        contraindicacoes: "Bradicardia, bloqueio AV, associação com BBs",
+        observacoes: "BCC não di-hidropiridínico (benzotiazepina). Mesmo cuidado com bradicardia e associação com BBs que o verapamil.",
+        sus: false
+      }
+    ]
+  },
+  ieca: {
+    classe: "Inibidores da Enzima Conversora da Angiotensina (IECA)",
+    sigla: "IECA",
+    mecanismo: "Bloqueiam a ECA, reduzindo produção de angiotensina II e degradação da bradicinina. Propriedades anti-ateroscleróticas e anti-inflamatórias.",
+    medicamentos: [
+      {
+        nome: "Captopril",
+        dose: "25–150 mg/dia",
+        frequencia: "2 a 3x ao dia",
+        efeitosColaterais: "Tosse seca (efeito de classe, por acúmulo de bradicinina), hiperpotassemia, piora da função renal no início, angioedema (raro mas grave), hipotensão",
+        contraindicacoes: "Gravidez (teratogênico — categoria X), estenose bilateral de artéria renal ou rim único, associação com BRA, hiperpotassemia grave, angioedema prévio",
+        observacoes: "Curta duração de ação, requer múltiplas tomadas. Disponível no SUS. Evitar em mulheres em idade fértil sem contracepção eficaz.",
+        sus: true
+      },
+      {
+        nome: "Enalapril",
+        dose: "5–40 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Tosse, hiperpotassemia, piora renal inicial, angioedema, hipotensão",
+        contraindicacoes: "Gravidez, estenose bilateral de artéria renal, associação com BRA",
+        observacoes: "Muito utilizado no SUS. Pró-fármaco convertido em enalaprilato.",
+        sus: true
+      },
+      {
+        nome: "Benazepril",
+        dose: "10–40 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Pró-fármaco. Longa duração de ação.",
+        sus: false
+      },
+      {
+        nome: "Lisinopril",
+        dose: "10–40 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Não é pró-fármaco. Excreção renal — ajuste na DRC.",
+        sus: false
+      },
+      {
+        nome: "Fosinopril",
+        dose: "10–40 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à classe. Menor acúmulo na DRC",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Dupla via de excreção (hepática e renal). Vantagem em DRC leve a moderada.",
+        sus: false
+      },
+      {
+        nome: "Ramipril",
+        dose: "2,5–20 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Estudo HOPE demonstrou benefício adicional em eventos CV de alto risco, além da redução pressórica.",
+        sus: false
+      },
+      {
+        nome: "Perindopril",
+        dose: "4–16 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Estudos PROGRESS e EUROPA. Longa duração de ação.",
+        sus: false
+      }
+    ]
+  },
+  bra: {
+    classe: "Bloqueadores dos Receptores AT1 da Angiotensina II (BRA / Sartanas)",
+    sigla: "BRA",
+    mecanismo: "Impedem a ação da angiotensina II por bloqueio do receptor AT1. Propriedades anti-ateroscleróticas e anti-inflamatórias. Não causam tosse (não inibem degradação da bradicinina).",
+    medicamentos: [
+      {
+        nome: "Losartana",
+        dose: "50–100 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Hiperpotassemia, piora renal inicial, angioedema (muito raro), hipotensão",
+        contraindicacoes: "Gravidez, estenose bilateral de artéria renal, associação com IECA",
+        observacoes: "Vantagem: não causa tosse. Alternativa ao IECA quando há intolerância por tosse. Disponível no SUS. Efeitos uricosúricos leves (benefício em hiperuricemia).",
+        sus: true
+      },
+      {
+        nome: "Valsartana",
+        dose: "80–320 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Estudos Val-HeFT e VALIANT em IC pós-IAM.",
+        sus: false
+      },
+      {
+        nome: "Irbesartana",
+        dose: "150–300 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Estudos IDNT e IRMA-2 em DRC diabética.",
+        sus: false
+      },
+      {
+        nome: "Candesartana",
+        dose: "8–32 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Alta afinidade pelo receptor AT1. Estudos CHARM em IC.",
+        sus: false
+      },
+      {
+        nome: "Olmesartana",
+        dose: "20–40 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Alta potência anti-hipertensiva.",
+        sus: false
+      },
+      {
+        nome: "Telmisartana",
+        dose: "20–80 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à classe",
+        contraindicacoes: "Semelhantes à classe",
+        observacoes: "Agonista parcial do receptor PPARγ. Meia-vida mais longa que outros BRAs. Estudo ONTARGET.",
+        sus: false
+      }
+    ]
+  },
+  betabloqueadores: {
+    classe: "Betabloqueadores (BB)",
+    sigla: "BB",
+    mecanismo: "Bloqueio dos receptores β-adrenérgicos. Redução da FC e débito cardíaco. Indicações específicas na HAS.",
+    indicacoes_especificas: "IC (ICFEr), síndromes coronarianas (pós-IAM, angina), fibrilação atrial (controle FC), mulheres com potencial gestacional, DRC em hemodiálise, arritmias, tremor essencial, enxaqueca, ansiedade, hipertensão portal",
+    contraindicacoes_gerais: "Broncopatia grave ou descompensada, bloqueio sinoatrial/AV, bradicardia (FC < 50 bpm), DAOP grave (exceto com ação vasodilatadora)",
+    medicamentos: [
+      {
+        nome: "Propranolol",
+        dose: "80–320 mg/dia",
+        frequencia: "2 a 3x ao dia",
+        efeitosColaterais: "Bradicardia, broncoespasmo, fadiga, disfunção erétil, vasoconstrição periférica, hipoglicemia mascarada",
+        contraindicacoes: "Asma/DPOC, bradicardia, bloqueio AV, DAOP grave, DM com hipoglicemias frequentes",
+        observacoes: "1ª geração — não cardiosseletivo (bloqueia β1 e β2). Efeitos periféricos mais acentuados. Retirada abrupta pode causar angina de rebote.",
+        sus: true
+      },
+      {
+        nome: "Nadolol",
+        dose: "40–160 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes ao propranolol",
+        contraindicacoes: "Semelhantes ao propranolol",
+        observacoes: "1ª geração — não cardiosseletivo. Longa duração de ação.",
+        sus: false
+      },
+      {
+        nome: "Pindolol",
+        dose: "10–60 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Menor bradicardia que outros BBs",
+        contraindicacoes: "Semelhantes ao propranolol",
+        observacoes: "1ª geração — possui atividade simpatomimética intrínseca (ASI), que proporciona menor bradicardia de repouso.",
+        sus: false
+      },
+      {
+        nome: "Atenolol",
+        dose: "50–100 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Bradicardia, fadiga, disfunção erétil (menos que propranolol)",
+        contraindicacoes: "Bradicardia, bloqueio AV. Cautela em asma (cardiosseletivo em doses baixas)",
+        observacoes: "2ª geração — cardiosseletivo (β1). Único BB com ECRs avaliados na RS da Diretriz 2025. Opção para HA em associação com outros anti-hipertensivos. Disponível no SUS.",
+        sus: true
+      },
+      {
+        nome: "Metoprolol",
+        dose: "50–200 mg/dia",
+        frequencia: "1x ao dia (succinato SR)",
+        efeitosColaterais: "Semelhantes ao atenolol",
+        contraindicacoes: "Semelhantes ao atenolol",
+        observacoes: "2ª geração — cardiosseletivo. Preferir formulação de succinato de liberação prolongada (SR). Indicado em ICFEr.",
+        sus: true
+      },
+      {
+        nome: "Bisoprolol",
+        dose: "5–20 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes ao atenolol, boa tolerabilidade",
+        contraindicacoes: "Semelhantes ao atenolol",
+        observacoes: "2ª geração — cardiosseletivo de alta seletividade. Indicado em ICFEr (estudo CIBIS-II).",
+        sus: false
+      },
+      {
+        nome: "Nebivolol",
+        dose: "2,5–10 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Menor disfunção erétil e fadiga por vasodilatação mediada por NO",
+        contraindicacoes: "Semelhantes ao atenolol",
+        observacoes: "3ª geração — cardiosseletivo com ação vasodilatadora por maior disponibilidade de óxido nítrico. Perfil metabólico mais neutro.",
+        sus: false
+      },
+      {
+        nome: "Carvedilol",
+        dose: "6,25–50 mg/dia",
+        frequencia: "1 a 2x ao dia",
+        efeitosColaterais: "Hipotensão postural (pelo bloqueio alfa-1), bradicardia, fadiga, tontura",
+        contraindicacoes: "Broncoespasmo, bloqueio AV > 1º grau, bradicardia grave. Cautela em hipotensão ortostática",
+        observacoes: "3ª geração — NÃO cardiosseletivo. Possui bloqueio alfa-1 adicional (vasodilatação) além do bloqueio beta não seletivo. Produz menor bradicardia que outros BBs. Especialmente indicado em ICFEr (estudos COPERNICUS e CAPRICORN). Disponível no SUS.",
+        sus: true
+      }
+    ]
+  },
+  simpatoliticos_centrais: {
+    classe: "Simpatolíticos de Ação Central",
+    sigla: "α2A",
+    mecanismo: "Agonistas dos receptores α2 centrais, reduzindo a atividade simpática periférica.",
+    medicamentos: [
+      {
+        nome: "Metildopa",
+        dose: "500–2000 mg/dia",
+        frequencia: "2x ao dia",
+        efeitosColaterais: "Sedação, boca seca, hipotensão ortostática, hepatotoxicidade (raro), anemia hemolítica (raro)",
+        contraindicacoes: "Hepatopatia ativa, hipersensibilidade",
+        observacoes: "MEDICAMENTO DE ESCOLHA NA GESTAÇÃO. Praticamente sua única indicação atualmente. Ampla segurança comprovada na gravidez.",
+        sus: true
+      },
+      {
+        nome: "Clonidina",
+        dose: "0,2–0,9 mg/dia",
+        frequencia: "2 a 3x ao dia",
+        efeitosColaterais: "Sedação, boca seca, hipotensão ortostática, taquicardia reflexa na retirada",
+        contraindicacoes: "Depressão grave, bloqueio AV",
+        observacoes: "ATENÇÃO: A retirada abrupta pode causar HIPERTENSÃO REBOTE grave (crise hipertensiva) por liberação de catecolaminas. Pode ser usada em elevação aguda da PA e em HA resistente quando há efeitos adversos intolerável com espironolactona/eplerenona. Iniciar com dose baixa à noite.",
+        sus: false
+      }
+    ]
+  },
+  alfabloqueadores: {
+    classe: "Alfabloqueadores (Simpatolíticos de Ação Periférica)",
+    sigla: "α1B",
+    mecanismo: "Bloqueio dos receptores α1 adrenérgicos periféricos, causando vasodilatação.",
+    medicamentos: [
+      {
+        nome: "Prazosina",
+        dose: "1–20 mg/dia",
+        frequencia: "2 a 3x ao dia",
+        efeitosColaterais: "Hipotensão ortostática de primeira dose, taquicardia reflexa, palpitações",
+        contraindicacoes: "Hipotensão ortostática grave",
+        observacoes: "Iniciar com dose baixa (1 mg) antes de deitar para minimizar hipotensão de primeira dose. Pode induzir taquifilaxia.",
+        sus: false
+      },
+      {
+        nome: "Doxazosina",
+        dose: "1–16 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Hipotensão ortostática (menor que prazosina), taquicardia reflexa",
+        contraindicacoes: "Hipotensão ortostática grave",
+        observacoes: "Indicação adicional em HBP (hiperplasia benigna de próstata) — benefício duplo em homens idosos. Disponível no SUS.",
+        sus: true
+      },
+      {
+        nome: "Terazosina",
+        dose: "1–20 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à doxazosina",
+        contraindicacoes: "Hipotensão ortostática grave",
+        observacoes: "Também indicada em HBP.",
+        sus: false
+      }
+    ]
+  },
+  vasodilatadores: {
+    classe: "Vasodilatadores de Ação Direta",
+    sigla: "VD",
+    mecanismo: "Relaxamento direto do músculo liso vascular, causando vasodilatação arteriolar.",
+    medicamentos: [
+      {
+        nome: "Hidralazina",
+        dose: "50–200 mg/dia",
+        frequencia: "2 a 3x ao dia",
+        efeitosColaterais: "Retenção de sódio/água, hipervolemia, taquicardia reflexa, cefaleia, síndrome lúpus-like (doses altas)",
+        contraindicacoes: "Taquiarritmias não controladas",
+        observacoes: "Deve ser usada em associação com diurético e betabloqueador para minimizar taquicardia reflexa e retenção hídrica. NÃO usar isoladamente. Pode ser usada na gestação.",
+        sus: true
+      },
+      {
+        nome: "Minoxidil",
+        dose: "5–40 mg/dia",
+        frequencia: "1x ao dia",
+        efeitosColaterais: "Semelhantes à hidralazina + hirsutismo (crescimento capilar), derrame pericárdico",
+        contraindicacoes: "Gestação, taquiarritmias",
+        observacoes: "Reservado para HA resistente ou refratária e HA maligna, ou para retirada de vasodilatadores IV. Mesmos cuidados que a hidralazina (associar DIU + BB). NÃO usar na gestação.",
+        sus: false
+      }
+    ]
+  }
+};
+
+// ============================================================
+// ESTADO GLOBAL DA APLICAÇÃO
+// ============================================================
+let dadosPaciente = {};
+let radioValues = {};
+
+// ============================================================
+// INICIALIZAÇÃO
+// ============================================================
+window.onload = function() {
+  verificarAvisoAceito();
+  carregarPerfil();
+};
+
+function verificarAvisoAceito() {
+  const aceito = sessionStorage.getItem('avisoAceito');
+  if (aceito) {
+    document.getElementById('modal-aviso').classList.remove('visivel');
+  }
+}
+
+function aceitarAviso() {
+  sessionStorage.setItem('avisoAceito', '1');
+  document.getElementById('modal-aviso').classList.remove('visivel');
+}
+
+// ============================================================
+// NAVEGAÇÃO
+// ============================================================
+function irPara(telaId) {
+  document.querySelectorAll('.tela').forEach(t => t.classList.remove('ativa'));
+  document.getElementById(telaId).classList.add('ativa');
+  window.scrollTo(0, 0);
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
+  setTimeout(() => window.scrollTo(0, 0), 50);
+}
+
+function verificarLogin() {
+  const perfil = localStorage.getItem('has_perfil');
+  if (perfil) {
+    carregarPerfil();
+    irPara('tela-home');
+  } else {
+    irPara('tela-cadastro');
+  }
+}
+
+// ============================================================
+// CADASTRO
+// ============================================================
+function salvarCadastro() {
+  const nome = document.getElementById('cad-nome').value.trim();
+  const email = document.getElementById('cad-email').value.trim();
+  const profissao = document.getElementById('cad-profissao').value;
+  const inscricao = document.getElementById('cad-inscricao').value.trim();
+
+  if (!nome || !email || !profissao || !inscricao) {
+    alert('Por favor, preencha todos os campos obrigatórios.');
+    return;
+  }
+  if (!email.includes('@')) {
+    alert('Por favor, informe um e-mail válido.');
+    return;
+  }
+
+  const perfil = { nome, email, profissao, inscricao };
+  localStorage.setItem('has_perfil', JSON.stringify(perfil));
+  carregarPerfil();
+  irPara('tela-home');
+}
+
+function carregarPerfil() {
+  const raw = localStorage.getItem('has_perfil');
+  if (!raw) return;
+  const p = JSON.parse(raw);
+
+  const primeiroNome = p.nome.split(' ')[0];
+  const el = document.getElementById('home-usuario');
+  if (el) el.textContent = primeiroNome;
+
+  // Licença na tela home
+  const licNome = document.getElementById('licenca-nome');
+  const licEmail = document.getElementById('licenca-email');
+  if (licNome) licNome.textContent = p.nome;
+  if (licEmail) licEmail.textContent = p.email;
+
+  const nc = document.getElementById('home-nome-card');
+  const pc = document.getElementById('home-prof-card');
+  if (nc) nc.textContent = p.nome;
+  if (pc) pc.textContent = p.profissao + ' · ' + p.inscricao;
+
+  document.getElementById('perfil-nome').textContent = p.nome;
+  document.getElementById('perfil-prof').textContent = p.profissao;
+  document.getElementById('perfil-email').textContent = p.email;
+  document.getElementById('perfil-inscricao').textContent = p.inscricao;
+}
+
+function excluirPerfil() {
+  if (confirm('Tem certeza que deseja excluir seu perfil? Esta ação não pode ser desfeita.')) {
+    localStorage.removeItem('has_perfil');
+    irPara('tela-inicio');
+  }
+}
+
+// ============================================================
+// INTERAÇÃO COM FORMULÁRIO
+// ============================================================
+function toggleCheck(labelEl) {
+  const checkbox = labelEl.querySelector('input[type=checkbox]');
+  if (!checkbox) return;
+  checkbox.checked = !checkbox.checked;
+  if (checkbox.checked) {
+    labelEl.classList.add('marcado');
+  } else {
+    labelEl.classList.remove('marcado');
+  }
+  // Lógica especial: mostrar campo de gestação se feminino
+  if (checkbox.id === 'rg-sexo') return;
+}
+
+function selecionarRadio(grupoId, valor, elClicado) {
+  radioValues[grupoId] = valor;
+  const grupo = document.getElementById(grupoId);
+  if (!grupo) return;
+  grupo.querySelectorAll('.radio-item').forEach(ri => ri.classList.remove('selecionado'));
+  elClicado.classList.add('selecionado');
+
+  // Mostrar campo gestação se sexo feminino
+  if (grupoId === 'rg-sexo' && valor === 'F') {
+    verificarIdadeGestacao();
+  } else if (grupoId === 'rg-sexo' && valor === 'M') {
+    document.getElementById('campo-potencial-gestacao').style.display = 'none';
+    radioValues['rg-gestacao'] = 'nao';
+  }
+}
+
+function getCheckValue(id) {
+  const el = document.getElementById(id);
+  return el ? el.checked : false;
+}
+
+// ============================================================
+// AVANÇOS DE PASSO
+// ============================================================
+function iniciarAvaliacao() {
+  dadosPaciente = {};
+  radioValues = {};
+  // Limpar checkboxes
+  document.querySelectorAll('.check-item').forEach(ci => {
+    ci.classList.remove('marcado');
+    const cb = ci.querySelector('input[type=checkbox]');
+    if (cb) cb.checked = false;
+  });
+  // Limpar radios
+  document.querySelectorAll('.radio-item').forEach(ri => ri.classList.remove('selecionado'));
+  // Limpar inputs
+  ['pas','pad','idade','prevent-score'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+  document.getElementById('drc-estagio').value = 'nenhum';
+  document.getElementById('campo-potencial-gestacao').style.display = 'none';
+  document.getElementById('campo-fa-controle').style.display = 'none';
+  radioValues['rg-fa-controle'] = null;
+  irPara('tela-passo1');
+}
+
+// Rola suavemente até um elemento e o destaca em vermelho temporariamente
+function destacarCampo(elementId) {
+  const el = document.getElementById(elementId);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  el.style.outline = '3px solid #c0392b';
+  el.style.borderRadius = '8px';
+  el.style.background = '#fdf0ef';
+  setTimeout(() => {
+    el.style.outline = '';
+    el.style.background = '';
+  }, 3000);
+}
+
+function mostrarErroCampo(elementId, mensagem) {
+  destacarCampo(elementId);
+  // Pequeno delay para o scroll acontecer antes do alert
+  setTimeout(() => alert('⚠️ ' + mensagem), 400);
+}
+
+// Exibe campo de potencial gestacional apenas para mulheres < 55 anos
+function verificarIdadeGestacao() {
+  const sexo = radioValues['rg-sexo'];
+  const idade = parseInt(document.getElementById('idade').value) || 0;
+  const campoGest = document.getElementById('campo-potencial-gestacao');
+
+  if (sexo === 'F' && idade < 60) {
+    campoGest.style.display = 'block';
+  } else {
+    campoGest.style.display = 'none';
+    // Limpar seleção anterior e forçar 'nao'
+    radioValues['rg-gestacao'] = 'nao';
+    campoGest.querySelectorAll('.radio-item').forEach(ri => ri.classList.remove('selecionado'));
+  }
+}
+
+// Toggle especial para FA — exibe sub-pergunta de controle de FC
+function toggleCheckFA(labelEl) {
+  toggleCheck(labelEl);
+  const checkbox = document.getElementById('dcv-fa');
+  const campo = document.getElementById('campo-fa-controle');
+  if (checkbox.checked) {
+    campo.style.display = 'block';
+  } else {
+    campo.style.display = 'none';
+    // Limpa a resposta de controle de FC
+    radioValues['rg-fa-controle'] = null;
+    document.querySelectorAll('#rg-fa-controle .radio-item').forEach(r => r.classList.remove('selecionado'));
+  }
+}
+
+
+function avancarPasso1() {
+  const pas = parseInt(document.getElementById('pas').value);
+  const pad = parseInt(document.getElementById('pad').value);
+  const idade = parseInt(document.getElementById('idade').value);
+  const sexo = radioValues['rg-sexo'];
+
+  if (!pas || !pad || pas < 60 || pad < 40) {
+    mostrarErroCampo('pas', 'Informe valores válidos de PAS e PAD (pressão arterial).');
+    return;
+  }
+  if (pas <= pad) {
+    mostrarErroCampo('pas', 'A PAS (sistólica, número maior) deve ser maior que a PAD (diastólica).');
+    return;
+  }
+  if (!idade || idade < 18) {
+    mostrarErroCampo('idade', 'Informe a idade do paciente (mínimo 18 anos).');
+    return;
+  }
+  if (!sexo) {
+    mostrarErroCampo('rg-sexo', 'Selecione o sexo do paciente. Esta informação é obrigatória.');
+    return;
+  }
+  if (sexo === 'F' && idade < 60 && !radioValues['rg-gestacao']) {
+    mostrarErroCampo('rg-gestacao', 'Informe se a paciente tem potencial gestacional. Esta informação é essencial para a escolha segura dos medicamentos.');
+    return;
+  }
+
+  dadosPaciente.pas = pas;
+  dadosPaciente.pad = pad;
+  dadosPaciente.idade = idade;
+  dadosPaciente.sexo = sexo;
+  // Gestação: apenas relevante para mulheres < 55 anos
+  dadosPaciente.gestacao = (sexo === 'F' && idade < 60) ? (radioValues['rg-gestacao'] || 'nao') : 'nao';
+  dadosPaciente.fragil = getCheckValue('chk-fragil');
+  dadosPaciente.hipotensaoOrtost = getCheckValue('chk-hipotensao-ortost');
+  dadosPaciente.hemodialise = getCheckValue('chk-hemodialise');
+
+  irPara('tela-passo2');
+}
+
+function avancarPasso2() {
+  const dm = radioValues['rg-dm'];
+  if (!dm) {
+    mostrarErroCampo('rg-dm', 'Responda se o paciente tem Diabetes Mellitus. Esta informação é obrigatória para a estratificação do risco cardiovascular.');
+    return;
+  }
+
+  dadosPaciente.tabagismo = getCheckValue('fr-tabagismo');
+  dadosPaciente.dislipidemia = getCheckValue('fr-dislipidemia');
+  dadosPaciente.obesidade = getCheckValue('fr-obesidade');
+  dadosPaciente.hfPrematura = getCheckValue('fr-hf-prematura');
+  dadosPaciente.dm = dm === 'sim';
+
+  irPara('tela-passo3');
+}
+
+function avancarPasso3() {
+  dadosPaciente.dcvCoronariana = getCheckValue('dcv-coronariana');
+  dadosPaciente.ccAngina = getCheckValue('cc-angina');
+  dadosPaciente.dcvIC = getCheckValue('dcv-ic');
+  dadosPaciente.ccICFEr = getCheckValue('cc-icfer');
+  dadosPaciente.dcvAVC = getCheckValue('dcv-avc');
+  dadosPaciente.dcvFA = getCheckValue('dcv-fa');
+  dadosPaciente.dcvDAOP = getCheckValue('dcv-daop');
+  dadosPaciente.loaHVE = getCheckValue('loa-hve');
+  dadosPaciente.loaAlbuminuria = getCheckValue('loa-albuminuria');
+  dadosPaciente.loaITB = getCheckValue('loa-itb');
+  dadosPaciente.loaCarotida = getCheckValue('loa-carotida');
+  dadosPaciente.loaVOP = getCheckValue('loa-vop');
+  dadosPaciente.loaRetinopatia = getCheckValue('loa-retinopatia');
+  dadosPaciente.drcEstagio = document.getElementById('drc-estagio').value;
+
+  // FA: se marcada, exige resposta sobre controle de FC
+  if (dadosPaciente.dcvFA && !radioValues['rg-fa-controle']) {
+    mostrarErroCampo('campo-fa-controle', 'Informe se há necessidade de controle da frequência cardíaca na FA.');
+    return;
+  }
+  dadosPaciente.ccFAControle = dadosPaciente.dcvFA && radioValues['rg-fa-controle'] === 'sim';
+
+  // Montar sumário
+  montarSumario();
+  irPara('tela-passo4');
+}
+
+function montarSumario() {
+  const d = dadosPaciente;
+  const classificaPA = obterClassificacaoPA(d.pas, d.pad);
+  const sexoTexto = d.sexo === 'M' ? 'Masculino' : 'Feminino';
+
+  let fr = [];
+  if (d.sexo === 'M' && d.idade > 55) fr.push('Sexo masc. > 55 anos');
+  if (d.sexo === 'F' && d.idade > 65) fr.push('Sexo fem. > 65 anos');
+  if (d.tabagismo) fr.push('Tabagismo');
+  if (d.dislipidemia) fr.push('Dislipidemia');
+  if (d.obesidade) fr.push('Obesidade');
+  if (d.hfPrematura) fr.push('HF DCV prematura');
+
+  let dcv = [];
+  if (d.dcvCoronariana) dcv.push('DAC');
+  if (d.dcvIC) dcv.push('IC');
+  if (d.dcvAVC) dcv.push('AVC/AIT');
+  if (d.dcvFA) dcv.push('FA');
+  if (d.dcvDAOP) dcv.push('DAOP');
+
+  let loa = [];
+  if (d.loaHVE) loa.push('HVE');
+  if (d.loaAlbuminuria) loa.push('Albuminúria');
+  if (d.loaITB) loa.push('ITB<0,9');
+  if (d.loaCarotida) loa.push('Placa carotídea');
+  if (d.loaVOP) loa.push('VOP≥10m/s');
+  if (d.loaRetinopatia) loa.push('Retinopatia');
+
+  const drcTextos = {
+    'nenhum': 'Sem DRC',
+    'G1G2': 'DRC G1-G2 (TFGe≥60)',
+    'G3a': 'DRC G3a (TFGe 45-59)',
+    'G3b': 'DRC G3b (TFGe 30-44)',
+    'G4': 'DRC G4 (TFGe 15-29)',
+    'G5': 'DRC G5 (diálise)'
+  };
+
+  let html = `
+    <div class="sumario-linha"><div class="sumario-label">PA</div><div class="sumario-valor"><strong>${d.pas}/${d.pad} mmHg</strong> — ${classificaPA.texto}</div></div>
+    <div class="sumario-linha"><div class="sumario-label">Idade / Sexo</div><div class="sumario-valor">${d.idade} anos / ${sexoTexto}</div></div>
+    <div class="sumario-linha"><div class="sumario-label">Diabetes</div><div class="sumario-valor">${d.dm ? '<span class="tag tag-sim">Sim</span>' : '<span class="tag tag-nao">Não</span>'}</div></div>
+    <div class="sumario-linha"><div class="sumario-label">Fatores de risco</div><div class="sumario-valor">${fr.length ? fr.map(f=>`<span class="tag tag-destaque">${f}</span>`).join('') : '<span class="tag tag-nao">Nenhum</span>'}</div></div>
+    <div class="sumario-linha"><div class="sumario-label">LOA</div><div class="sumario-valor">${loa.length ? loa.map(l=>`<span class="tag tag-destaque">${l}</span>`).join('') : '<span class="tag tag-nao">Nenhuma</span>'}</div></div>
+    <div class="sumario-linha"><div class="sumario-label">DCV estabelecida</div><div class="sumario-valor">${dcv.length ? dcv.map(d=>`<span class="tag tag-sim">${d}</span>`).join('') : '<span class="tag tag-nao">Não</span>'}</div></div>
+    <div class="sumario-linha"><div class="sumario-label">DRC</div><div class="sumario-valor">${drcTextos[d.drcEstagio]}</div></div>
+    <div class="sumario-linha"><div class="sumario-label">Frágil / Hip. Ortost.</div><div class="sumario-valor">${d.fragil ? '<span class="tag tag-sim">Frágil</span>' : ''} ${d.hipotensaoOrtost ? '<span class="tag tag-sim">Hip. Ortost.</span>' : ''} ${!d.fragil && !d.hipotensaoOrtost ? '<span class="tag tag-nao">Não</span>' : ''}</div></div>
+  `;
+  document.getElementById('sumario-conteudo').innerHTML = html;
+}
+
+// ============================================================
+// MOTOR DE CLASSIFICAÇÃO — Diretriz HAS 2025
+// ============================================================
+function obterClassificacaoPA(pas, pad) {
+  // Classificação pelo valor MAIS ELEVADO (sistólica ou diastólica) — Quadro 3.2
+  if (pas < 120 && pad < 80) return { codigo: 'normal', texto: 'PA Normal', estagio: 0 };
+  // Pré-hipertensão: PAS 120-139 E/OU PAD 80-89
+  // Mas se PAS ≥ 140: já é pelo menos Estágio 1, independente da PAD
+  if (pas >= 180 || pad >= 110) return { codigo: 'estagio3', texto: 'Hipertensão Estágio 3 (≥ 180/110 mmHg)', estagio: 3 };
+  if (pas >= 160 || pad >= 100) return { codigo: 'estagio2', texto: 'Hipertensão Estágio 2 (160-179/100-109 mmHg)', estagio: 2 };
+  if (pas >= 140 || pad >= 90)  return { codigo: 'estagio1', texto: 'Hipertensão Estágio 1 (140-159/90-99 mmHg)', estagio: 1 };
+  // Pré-hipertensão: PAS 120-139 e/ou PAD 80-89
+  return { codigo: 'pre', texto: 'Pré-hipertensão (120-139/80-89 mmHg)', estagio: 0.5 };
+}
+
+function contarFatoresRisco(d) {
+  let fr = 0;
+  if (d.sexo === 'M' && d.idade > 55) fr++;
+  if (d.sexo === 'F' && d.idade > 65) fr++;
+  if (d.tabagismo) fr++;
+  if (d.dislipidemia) fr++;
+  if (d.obesidade) fr++;
+  if (d.hfPrematura) fr++;
+  return fr;
+}
+
+function temLOA(d) {
+  return d.loaHVE || d.loaAlbuminuria || d.loaITB || d.loaCarotida || d.loaVOP || d.loaRetinopatia
+    || d.drcEstagio === 'G3a' || d.drcEstagio === 'G3b';
+}
+
+function temDCV(d) {
+  return d.dcvCoronariana || d.ccAngina ||   // DAC / angina / pós-IAM
+         d.dcvIC || d.ccICFEr ||             // IC (qualquer) ou ICFEr confirmada
+         d.dcvAVC ||                          // AVC/AIT
+         d.dcvFA || d.ccFAControle ||         // FA (qualquer)
+         d.dcvDAOP ||                         // DAOP
+         d.drcEstagio === 'G4' || d.drcEstagio === 'G5'; // DRC avançada
+}
+
+function calcularRiscoCV(d, paClassif) {
+  // Condições de risco muito alto — independente da PA
+  if (temDCV(d)) return 'muito_alto';
+  if (d.drcEstagio === 'G4' || d.drcEstagio === 'G5') return 'muito_alto';
+
+  // LOA, DRC G3 ou DM → risco alto (Quadro 4.6)
+  if (d.drcEstagio === 'G3a' || d.drcEstagio === 'G3b') return 'alto';
+  if (temLOA(d)) return 'alto';
+  if (d.dm) return determinarRiscoDM(d, paClassif);
+
+  // Escore PREVENT se informado — prevalece sobre contagem de FR
+  const prevent = parseFloat(document.getElementById('prevent-score').value);
+  if (!isNaN(prevent) && prevent > 0) {
+    if (prevent >= 20) return 'alto';       // PREVENT ≥20% = alto risco
+    if (prevent >= 7.5) return 'intermediario';
+    if (prevent >= 5) return 'limitrofe';
+    return 'baixo';
+  }
+
+  // Quadro 4.6 — classificação por estágio + FRCVs
+  const fr = contarFatoresRisco(d);
+  const estagio = paClassif.estagio;
+
+  if (estagio === 0.5) { // Pré-hipertensão
+    if (fr === 0) return 'baixo';
+    if (fr <= 2) return 'baixo';
+    return 'alto'; // ≥3 FRCVs
+  }
+  if (estagio === 1) {
+    if (fr === 0) return 'baixo';
+    if (fr <= 2) return 'baixo';
+    return 'alto'; // ≥3 FRCVs → alto
+  }
+  if (estagio === 2) {
+    if (fr === 0) return 'moderado';
+    if (fr <= 2) return 'moderado';
+    return 'alto'; // ≥3 FRCVs
+  }
+  if (estagio === 3) {
+    return 'alto'; // Estágio 3 sem DCV/LOA/DM = alto
+  }
+  return 'baixo';
+}
+
+function determinarRiscoDM(d, paClassif) {
+  if (temDCV(d) || temLOA(d)) return 'muito_alto';
+  return 'alto'; // DM isolado = alto em qualquer estágio (Quadro 4.6)
+}
+
+function determinarCategoriaFluxograma(d, paClass, risco) {
+  // PA verdadeiramente normal (< 120/80)
+  if (paClass.estagio === 0) return 'normal';
+
+  // Estágios 2 e 3 → dupla SEMPRE
+  if (paClass.estagio >= 2) return 'estagio2_3';
+
+  // Pré-hipertensão (120-139/80-89)
+  if (paClass.estagio === 0.5) {
+    if (risco === 'alto' || risco === 'muito_alto') return 'pre_alto_risco';
+    return 'pre_baixo_risco'; // baixo, limítrofe, intermediário → só MNM
+  }
+
+  // Estágio 1 — condições especiais que permitem monoterapia
+  if (paClass.estagio === 1 && (d.fragil || d.hipotensaoOrtost || d.idade >= 80)) return 'monoterapia_especial';
+
+  // Estágio 1 — pelo risco calculado
+  if (paClass.estagio === 1) {
+    if (risco === 'baixo' || risco === 'limitrofe') return 'estagio1_baixo';
+    if (risco === 'intermediario') return 'estagio1_baixo'; // PREVENT intermediário → monoterapia a critério
+    if (risco === 'moderado' || risco === 'alto' || risco === 'muito_alto') return 'estagio1_alto';
+  }
+
+  return 'pre_baixo_risco'; // fallback seguro — nunca retorna 'normal' para PA elevada
+}
+
+function classificarPaciente() {
+  const prevent = document.getElementById('prevent-score').value;
+  dadosPaciente.preventScore = prevent ? parseFloat(prevent) : null;
+
+  const paClass = obterClassificacaoPA(dadosPaciente.pas, dadosPaciente.pad);
+  dadosPaciente.paClassif = paClass;
+
+  // PA normal — não calcular risco nem exibir estratificação
+  if (paClass.estagio === 0) {
+    dadosPaciente.riscoCV = null;
+    dadosPaciente.categoria = 'normal';
+  } else {
+    const riscoCV = calcularRiscoCV(dadosPaciente, paClass);
+    dadosPaciente.riscoCV = riscoCV;
+    dadosPaciente.categoria = determinarCategoriaFluxograma(dadosPaciente, paClass, riscoCV);
+  }
+
+  irPara('tela-resultado');
+  renderizarResultado();
+}
+
+// ============================================================
+// RENDERIZAÇÃO DO RESULTADO
+// ============================================================
+const riscoTextos = {
+  baixo: { texto: 'Risco CV Baixo', cor: 'baixo', badge: 'badge-baixo' },
+  limitrofe: { texto: 'Risco CV Limítrofe', cor: 'baixo', badge: 'badge-baixo' },
+  intermediario: { texto: 'Risco CV Intermediário', cor: 'moderado', badge: 'badge-moderado' },
+  moderado: { texto: 'Risco CV Moderado', cor: 'moderado', badge: 'badge-moderado' },
+  alto: { texto: 'Risco CV Alto', cor: 'alto', badge: 'badge-alto' },
+  muito_alto: { texto: 'Risco CV Muito Alto', cor: 'muito-alto', badge: 'badge-muito-alto' }
+};
+
+function renderizarResultado() {
+  const d = dadosPaciente;
+
+  // ---- CLASSIFICAÇÃO ----
+  let htmlClass;
+  if (d.categoria === 'normal') {
+    htmlClass = `
+      <div class="resultado-card resultado-baixo">
+        <div class="resultado-badge badge-baixo">PA Normal</div>
+        <div class="resultado-titulo">${d.paClassif.texto}</div>
+        <div class="resultado-desc">PA: <strong>${d.pas}/${d.pad} mmHg</strong> | Idade: ${d.idade} anos | ${d.sexo === 'M' ? 'Masculino' : 'Feminino'}</div>
+      </div>
+    `;
+  } else {
+    const risco = riscoTextos[d.riscoCV] || riscoTextos['baixo'];
+    htmlClass = `
+      <div class="resultado-card resultado-${risco.cor}">
+        <div class="resultado-badge ${risco.badge}">${risco.texto}</div>
+        <div class="resultado-titulo">${d.paClassif.texto}</div>
+        <div class="resultado-desc">PA: <strong>${d.pas}/${d.pad} mmHg</strong> | Idade: ${d.idade} anos | ${d.sexo === 'M' ? 'Masculino' : 'Feminino'}</div>
+      </div>
+    `;
+  }
+  document.getElementById('resultado-classificacao').innerHTML = htmlClass;
+
+  // ---- RESUMO DOS DADOS ----
+  document.getElementById('resultado-resumo-dados').innerHTML = gerarResumoDados(d);
+
+  // ---- CONDUTA ----
+  document.getElementById('resultado-conduta').innerHTML = gerarConduta(d);
+
+  // Eventos de expansão das etapas
+  document.querySelectorAll('.etapa-header').forEach(h => {
+    h.addEventListener('click', () => {
+      h.parentElement.classList.toggle('aberta');
+    });
+  });
+}
+
+function gerarResumoDados(d) {
+  const sexoTexto = d.sexo === 'M' ? 'Masculino' : 'Feminino';
+
+  const fr = [];
+  if (d.sexo === 'M' && d.idade > 55) fr.push('Sexo masc. > 55 anos');
+  if (d.sexo === 'F' && d.idade > 65) fr.push('Sexo fem. > 65 anos');
+  if (d.tabagismo) fr.push('Tabagismo');
+  if (d.dislipidemia) fr.push('Dislipidemia');
+  if (d.obesidade) fr.push('Obesidade');
+  if (d.hfPrematura) fr.push('HF DCV prematura');
+
+  const loa = [];
+  if (d.loaHVE) loa.push('HVE');
+  if (d.loaAlbuminuria) loa.push('Albuminúria');
+  if (d.loaITB) loa.push('ITB < 0,9');
+  if (d.loaCarotida) loa.push('Placa carotídea');
+  if (d.loaVOP) loa.push('VOP ≥ 10 m/s');
+  if (d.loaRetinopatia) loa.push('Retinopatia');
+  if (d.drcEstagio === 'G3a' || d.drcEstagio === 'G3b') loa.push('DRC ' + d.drcEstagio);
+
+  const dcv = [];
+  if (d.dcvCoronariana) dcv.push('DAC/Angina/pós-IAM');
+  if (d.dcvIC && !d.ccICFEr) dcv.push('IC (FE não especificada)');
+  if (d.ccICFEr) dcv.push('IC com FE reduzida (ICFEr)');
+  if (d.dcvAVC) dcv.push('AVC/AIT');
+  if (d.dcvFA || d.ccFAControle) dcv.push('Fibrilação atrial');
+  if (d.dcvDAOP) dcv.push('DAOP');
+  if (d.drcEstagio === 'G4') dcv.push('DRC G4');
+  if (d.drcEstagio === 'G5') dcv.push('DRC G5/diálise');
+
+  const condEsp = [];
+  if (d.fragil) condEsp.push('Frágil');
+  if (d.hipotensaoOrtost) condEsp.push('Hip. ortostática');
+  if (d.hemodialise) condEsp.push('Hemodiálise');
+  if (d.ccAngina) condEsp.push('Angina/pós-IAM');
+  if (d.gestacao === 'sim') condEsp.push('Potencial gestacional');
+
+  const drcTextos = {
+    nenhum:'Sem DRC', G1G2:'G1-G2 (TFGe ≥ 60)', G3a:'G3a (TFGe 45-59)',
+    G3b:'G3b (TFGe 30-44)', G4:'G4 (TFGe 15-29)', G5:'G5 (diálise)'
+  };
+
+  const tag = (t, tipo) => `<span class="tag tag-${tipo}">${t}</span>`;
+  const lista = (arr, tipo) => arr.length
+    ? arr.map(i => tag(i, tipo)).join(' ')
+    : tag('Nenhum', 'nao');
+
+  const preventTexto = d.preventScore != null
+    ? `${d.preventScore}% em 10 anos`
+    : 'Não informado';
+
+  return `
+    <div class="card" style="margin-bottom:16px;">
+      <div class="card-titulo" style="cursor:pointer;" onclick="this.parentElement.querySelector('.resumo-body').classList.toggle('oculto')">
+        📋 Dados que levaram a esta conclusão <span style="font-size:12px;color:var(--cinza-medio);">(toque para expandir/recolher)</span>
+      </div>
+      <div class="resumo-body oculto">
+        <div class="sumario-linha"><div class="sumario-label">PA aferida</div><div class="sumario-valor"><strong>${d.pas}/${d.pad} mmHg</strong></div></div>
+        <div class="sumario-linha"><div class="sumario-label">Classificação PA</div><div class="sumario-valor">${d.paClassif.texto}</div></div>
+        <div class="sumario-linha"><div class="sumario-label">Idade / Sexo</div><div class="sumario-valor">${d.idade} anos / ${sexoTexto}</div></div>
+        <div class="sumario-linha"><div class="sumario-label">Diabetes</div><div class="sumario-valor">${d.dm ? tag('Sim','sim') : tag('Não','nao')}</div></div>
+        <div class="sumario-linha"><div class="sumario-label">Fatores de risco CV</div><div class="sumario-valor">${lista(fr,'destaque')}</div></div>
+        <div class="sumario-linha"><div class="sumario-label">Lesão órgão-alvo</div><div class="sumario-valor">${lista(loa,'destaque')}</div></div>
+        <div class="sumario-linha"><div class="sumario-label">DCV estabelecida</div><div class="sumario-valor">${lista(dcv,'sim')}</div></div>
+        <div class="sumario-linha"><div class="sumario-label">DRC</div><div class="sumario-valor">${drcTextos[d.drcEstagio] || 'Sem DRC'}</div></div>
+        <div class="sumario-linha"><div class="sumario-label">Escore PREVENT</div><div class="sumario-valor">${preventTexto}</div></div>
+        ${condEsp.length ? `<div class="sumario-linha"><div class="sumario-label">Cond. especiais</div><div class="sumario-valor">${lista(condEsp,'sim')}</div></div>` : ''}
+        <div class="separador"></div>
+        ${d.categoria !== 'normal' ? `<div class="sumario-linha"><div class="sumario-label">Risco CV calculado</div><div class="sumario-valor"><strong>${riscoTextos[d.riscoCV]?.texto || '—'}</strong></div></div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function gerarConduta(d) {
+  const cat = d.categoria;
+  // BB POSSÍVEL: qualquer condição que favorece seu uso
+  const indicaBB = d.dcvCoronariana || d.ccAngina || d.ccICFEr || d.dcvIC || d.dcvFA || d.ccFAControle
+    || d.hemodialise || d.gestacao === 'sim';
+  // BB com indicação mais forte (exclui gestação que é apenas "pode ser considerado")
+  const bbForte = d.dcvCoronariana || d.ccAngina || d.ccICFEr || d.dcvFA || d.ccFAControle || d.hemodialise;
+
+  let html = '<div class="card"><div class="card-titulo">📋 Conduta Recomendada — Fluxograma 14.3</div>';
+
+  if (cat === 'normal') {
+    html += `<div class="info-box verde">✅ PA normal (< 120/80 mmHg). Manter hábitos saudáveis e reavaliação periódica.</div>`;
+    html += '</div>';
+    return html;
+  }
+
+  if (cat === 'pre_baixo_risco') {
+    html += `
+      <div class="info-box azul">📌 Pré-hipertensão (${d.pas}/${d.pad} mmHg) — ${riscoTextos[d.riscoCV].texto}.<br>
+      Atenção: pré-hipertensão não é PA normal. Requer acompanhamento e medidas não medicamentosas imediatas.</div>
+      ${gerarEtapaMNM()}
+      <div class="info-box amarelo">ℹ️ Tratamento medicamentoso NÃO indicado neste momento. Reavaliar em 3 meses. Se PA não controlada com MNM e risco aumentar, reavaliar indicação de medicamento.</div>
+    `;
+    html += '</div>';
+    return html;
+  }
+
+
+  if (cat === 'pre_alto_risco') {
+    html += `
+      <div class="info-box vermelho">🔴 Pré-hipertensão (${d.pas}/${d.pad} mmHg) com <strong>${riscoTextos[d.riscoCV].texto}</strong>.</div>
+      <div class="info-box amarelo">⚠️ A Diretriz recomenda MNM imediatas. O tratamento medicamentoso deve ser <strong>considerado</strong> — especialmente se a PA não atingir a meta após período de MNM. Em pacientes de alto e muito alto risco com pré-hipertensão, o período de espera pelas MNM pode ser encurtado a critério médico, dado o benefício documentado na redução de AVC.</div>
+      ${gerarEtapaMNM()}
+      <div class="etapa">
+        <div class="etapa-header"><div class="etapa-numero">2</div><div class="etapa-titulo-texto">Tratamento medicamentoso — Monoterapia (a critério médico)</div><div class="etapa-chevron">▼</div></div>
+        <div class="etapa-body">
+          <p style="font-size:13px;line-height:1.7;margin-bottom:8px;">Se PA não controlada com MNM ou a critério médico considerando o risco individual: iniciar <strong>monoterapia</strong>. Meta: PA &lt; 130/80 mmHg.</p>
+          <div class="info-box azul">💊 Classes de escolha: DIU tiazídico, BCC, IECA ou BRA${indicaBB ? ', BB (condição específica presente)' : ''}.</div>
+          ${indicaBB ? gerarAlertaBB(d) : ''}
+          <div class="info-box verde">🎯 Meta: PA &lt; 130/80 mmHg</div>
+          ${gerarAlertasContextuais(d, 'primeira_linha')}
+          ${gerarMedsEtapa(['diureticos_tiazidicos','bcc','ieca','bra'], indicaBB, d)}
+        </div>
+      </div>
+      ${gerarEtapasProgressao(d, indicaBB, 2)}
+    `;
+    html += '</div>';
+    return html;
+  }
+
+  if (cat === 'estagio1_baixo') {
+    html += `
+      <div class="info-box azul">📌 HA Estágio 1 — ${riscoTextos[d.riscoCV].texto}. Monoterapia a critério médico (ou dupla associação).</div>
+      ${gerarEtapaMNM()}
+      <div class="etapa">
+        <div class="etapa-header"><div class="etapa-numero">2</div><div class="etapa-titulo-texto">Monoterapia (a critério médico)</div><div class="etapa-chevron">▼</div></div>
+        <div class="etapa-body">
+          <p style="font-size:13px;line-height:1.7;margin-bottom:8px;">Iniciar com dose baixa de único medicamento. Início imediato com MNM.</p>
+          <div class="info-box azul">💊 Classes de escolha: DIU tiazídico, BCC, IECA ou BRA${indicaBB ? ', BB (indicação específica presente)' : ''}.</div>
+          ${indicaBB ? gerarAlertaBB(d) : ''}
+          <div class="info-box verde">🎯 Meta: PA &lt; 130/80 mmHg</div>
+          ${gerarAlertasContextuais(d, 'primeira_linha')}
+          ${gerarMedsEtapa(['diureticos_tiazidicos','bcc','ieca','bra'], indicaBB, d)}
+        </div>
+      </div>
+      ${gerarEtapasProgressao(d, indicaBB, 2)}
+    `;
+    html += '</div>';
+    return html;
+  }
+
+  if (cat === 'monoterapia_especial') {
+    let motivo = d.idade >= 80 ? 'Paciente com ≥ 80 anos' : d.fragil ? 'Paciente frágil' : 'Hipotensão ortostática sintomática';
+    html += `
+      <div class="info-box amarelo">⚠️ <strong>${motivo}</strong> — Estratégia: Monoterapia com ajuste individualizado e cautela.</div>
+      <div class="info-box vermelho">🔴 Avaliar com cautela: hipotensão ortostática, fragilidade grave, expectativa de vida &lt; 3 anos.</div>
+      ${gerarEtapaMNM()}
+      <div class="etapa aberta">
+        <div class="etapa-header"><div class="etapa-numero">2</div><div class="etapa-titulo-texto">Monoterapia — dose baixa, ajuste gradual</div><div class="etapa-chevron">▼</div></div>
+        <div class="etapa-body">
+          <p style="font-size:13px;line-height:1.7;margin-bottom:8px;">Iniciar com <strong>dose baixa</strong>, aumentar progressivamente. Meta individualizada.</p>
+          <div class="info-box azul">💊 Classes de escolha: DIU tiazídico, BCC, IECA ou BRA${indicaBB ? ', BB (indicação específica)' : ''}.</div>
+          ${indicaBB ? gerarAlertaBB(d) : ''}
+          <div class="info-box amarelo">🎯 Meta para ≥ 80 anos: PAS &lt; 140 mmHg (individualizar)</div>
+          ${gerarAlertasContextuais(d, 'primeira_linha')}
+          ${gerarMedsEtapa(['diureticos_tiazidicos','bcc','ieca','bra'], indicaBB, d)}
+        </div>
+      </div>
+      ${gerarEtapasProgressao(d, indicaBB, 2)}
+    `;
+    html += '</div>';
+    return html;
+  }
+
+  // Estágio 1 mod/alto ou Estágios 2 e 3
+  const alertaFragilidade = (d.fragil || d.hipotensaoOrtost || d.idade >= 80) ? `
+    <div class="info-box amarelo">⚠️ <strong>Atenção — paciente com condição especial (${d.idade >= 80 ? '≥ 80 anos' : d.fragil ? 'frágil' : 'hipotensão ortostática'}):</strong> A associação dupla ainda é indicada para Estágios 2 e 3, mas iniciar com doses baixas e titular lentamente. Monitorar PA, função renal e hipotensão postural de perto. Meta individualizada.</div>
+  ` : '';
+
+  html += `
+    <div class="info-box ${d.paClassif.estagio >= 2 ? 'vermelho' : 'amarelo'}">🔴 ${d.paClassif.texto} — ${riscoTextos[d.riscoCV].texto}. Estratégia inicial: <strong>Associação dupla</strong>. Início imediato.</div>
+    ${alertaFragilidade}
+    ${gerarEtapaMNM()}
+    <div class="etapa aberta">
+      <div class="etapa-header"><div class="etapa-numero">2</div><div class="etapa-titulo-texto">1ª Etapa — Associação dupla (~60% controle)</div><div class="etapa-chevron">▼</div></div>
+      <div class="etapa-body">
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px;">Preferencialmente em <strong>comprimido único</strong>. Otimizar doses até as máximas toleradas.</p>
+        <div class="info-box azul">💊 Combinações preferidas:<br>• IECA ou BRA + DIU tiazídico<br>• IECA ou BRA + BCC${indicaBB ? '<br>• + BB possível (condição específica)' : ''}</div>
+        ${indicaBB ? gerarAlertaBB(d) : ''}
+        <div class="info-box verde">🎯 Meta: PA &lt; 130/80 mmHg</div>
+        ${gerarAlertasContextuais(d, 'dupla')}
+        ${gerarMedsEtapa(['diureticos_tiazidicos','bcc','ieca','bra'], indicaBB, d)}
+      </div>
+    </div>
+    ${gerarEtapasProgressao(d, indicaBB, 3)}
+  `;
+  html += '</div>';
+  return html;
+}
+
+function gerarMNM() {
+  return `
+    <div class="info-box verde" style="margin-top:10px;">
+      <strong>Medidas não medicamentosas essenciais:</strong><br>
+      • Redução de sal (≤ 2g Na/dia = 5g NaCl/dia)<br>
+      • Dieta DASH (rica em frutas, vegetais, laticínios desnatados)<br>
+      • Exercício aeróbico: 3-5x/sem, 30-60 min/sessão<br>
+      • Redução de peso (meta IMC &lt; 25 kg/m²)<br>
+      • Cessação do tabagismo<br>
+      • Limitação de álcool (≤1 dose/dia mulheres, ≤2 doses/dia homens)<br>
+      • Redução do estresse
+    </div>
+  `;
+}
+
+function gerarEtapaMNM() {
+  return `
+    <div class="etapa">
+      <div class="etapa-header"><div class="etapa-numero">1</div><div class="etapa-titulo-texto">Medidas não medicamentosas (MNM) — Início imediato</div><div class="etapa-chevron">▼</div></div>
+      <div class="etapa-body">${gerarMNM()}</div>
+    </div>
+  `;
+}
+
+function gerarAlertaBB(d) {
+  let indicacoes = [];
+  if (d.dcvCoronariana || d.ccAngina) indicacoes.push('DAC / Angina / Pós-IAM');
+  if (d.dcvIC || d.ccICFEr) indicacoes.push('Insuficiência cardíaca (ICFEr)');
+  if (d.dcvFA || d.ccFAControle) indicacoes.push('Fibrilação atrial (controle de FC)');
+  if (d.hemodialise) indicacoes.push('DRC em hemodiálise');
+  if (d.gestacao === 'sim') indicacoes.push('Mulher com potencial gestacional');
+  return `
+    <div class="obs-bb">
+      <strong>⚠️ BETABLOQUEADOR POSSÍVEL</strong> neste paciente pelas seguintes condições:<br>
+      ${indicacoes.map(i => `• ${i}`).join('<br>')}
+    </div>
+  `;
+}
+
+// ============================================================
+// ALERTAS CONTEXTUAIS POR PERFIL DO PACIENTE
+// ============================================================
+function gerarAlertasContextuais(d, etapa) {
+  let alertas = [];
+
+  // --- GESTAÇÃO ---
+  if (d.gestacao === 'sim') {
+    alertas.push({
+      tipo: 'vermelho',
+      icone: '🤰',
+      titulo: 'ATENÇÃO — IECA e BRA CONTRAINDICADOS nesta paciente',
+      corpo: 'Risco de malformações fetais graves e complicações na gestação (categoria X). Use preferencialmente metildopa (1ª escolha na gestação), anlodipino ou hidralazina. Betabloqueadores (atenolol, metoprolol) também podem ser considerados neste perfil.'
+    });
+  }
+
+  // --- IECA + BRA sempre ---
+  if (etapa === 'primeira_linha' || etapa === 'dupla' || etapa === 'tripla') {
+    alertas.push({
+      tipo: 'vermelho',
+      icone: '⛔',
+      titulo: 'Associação CONTRAINDICADA',
+      corpo: '<strong>IECA + BRA juntos são PROIBIDOS.</strong> A combinação aumenta efeitos adversos (hiperpotassemia, injúria renal aguda) sem reduzir desfechos cardiovasculares (estudo ONTARGET).'
+    });
+  }
+
+  // --- DRC ---
+  if (d.drcEstagio && d.drcEstagio !== 'nenhum' && d.drcEstagio !== 'G1G2') {
+    alertas.push({
+      tipo: 'amarelo',
+      icone: '🫘',
+      titulo: 'DRC presente — cuidados específicos',
+      corpo: 'Monitorar creatinina e potássio regularmente. IECA ou BRA são preferidos (nefroproteção), mas podem elevar creatinina e potássio no início — aceitável até 30% de elevação. Furosemida preferida ao tiazídico se TFGe < 30. Evitar AINE.'
+    });
+  }
+
+  // --- HIPERPOTASSEMIA (IECA/BRA + espironolactona) ---
+  if (etapa === 'quarto') {
+    if (d.drcEstagio && d.drcEstagio !== 'nenhum') {
+      alertas.push({
+        tipo: 'vermelho',
+        icone: '⚠️',
+        titulo: 'Alto risco de hiperpotassemia',
+        corpo: 'Associação de espironolactona com IECA ou BRA em paciente com DRC: <strong>monitorar potássio sérico obrigatoriamente</strong> antes do início e após 1–2 semanas. Contraindicado se K+ > 5,5 mEq/L.'
+      });
+    }
+  }
+
+  // --- ICFEr (só quando explicitamente marcada) ---
+  if (d.ccICFEr) {
+    if (etapa === 'primeira_linha' || etapa === 'dupla' || etapa === 'tripla') {
+      alertas.push({
+        tipo: 'amarelo',
+        icone: '🫀',
+        titulo: 'IC com fração de ejeção reduzida (ICFEr) — fármacos preferenciais',
+        corpo: 'Preferir IECA ou BRA + betabloqueador cardiosseletivo (carvedilol, metoprolol, bisoprolol, nebivolol). Verapamil e diltiazem (BCCs não di-hidropiridínicos) são CONTRAINDICADOS na ICFEr. BCCs di-hidropiridínicos (anlodipino, felodipino) são permitidos.'
+      });
+    }
+  }
+
+  // --- IC genérica (sem ICFEr confirmada) ---
+  if (d.dcvIC && !d.ccICFEr) {
+    if (etapa === 'primeira_linha' || etapa === 'dupla') {
+      alertas.push({
+        tipo: 'amarelo',
+        icone: '🫀',
+        titulo: 'Insuficiência cardíaca — atenção à escolha do BCC',
+        corpo: 'Se houver disfunção sistólica (ICFEr): verapamil e diltiazem são contraindicados. Confirme a fração de ejeção antes de prescrever BCC não di-hidropiridínico.'
+      });
+    }
+  }
+
+  // --- FA ---
+  if (d.dcvFA || d.ccFAControle) {
+    alertas.push({
+      tipo: 'amarelo',
+      icone: '💓',
+      titulo: 'Fibrilação atrial — controle de FC',
+      corpo: 'Para controle da frequência cardíaca na FA: betabloqueador possível. Verapamil e diltiazem são alternativas para controle de FC na FA, mas contraindicados em ICFEr.'
+    });
+  }
+
+  // --- DAC / Angina / pós-IAM ---
+  if (d.dcvCoronariana || d.ccAngina) {
+    alertas.push({
+      tipo: 'amarelo',
+      icone: '🫀',
+      titulo: 'DAC / Angina / pós-IAM',
+      corpo: 'Betabloqueador possível. Preferir cardiosseletivos (atenolol, metoprolol, bisoprolol). BCC di-hidropiridínico pode ser adicionado para controle adicional da angina. Evitar retirada abrupta do BB.'
+    });
+  }
+
+  // --- Hemodiálise ---
+  if (d.hemodialise) {
+    alertas.push({
+      tipo: 'amarelo',
+      icone: '🩸',
+      titulo: 'Paciente em hemodiálise',
+      corpo: 'Betabloqueador indicado. Ajustar doses de medicamentos com excreção renal. IECA e BRA podem ser usados, com monitoramento de potássio. Diuréticos têm eficácia limitada na anúria — considerar furosemida em altas doses se ainda houver diurese residual.'
+    });
+  }
+
+  // --- Hipotensão ortostática ---
+  if (d.hipotensaoOrtost) {
+    alertas.push({
+      tipo: 'amarelo',
+      icone: '🧍',
+      titulo: 'Hipotensão ortostática',
+      corpo: 'Evitar ou usar com cautela: alfabloqueadores, clonidina, diuréticos em altas doses. Preferir BCC di-hidropiridínico de longa ação ou IECA/BRA em doses baixas. Orientar levantamento lento.'
+    });
+  }
+
+  // --- Idoso ≥80 ---
+  if (d.idade >= 80) {
+    if (etapa === 'primeira_linha') {
+      alertas.push({
+        tipo: 'amarelo',
+        icone: '👴',
+        titulo: 'Paciente com ≥ 80 anos — cautela redobrada',
+        corpo: 'Iniciar sempre com dose baixa. Aumentar gradualmente. Meta: PAS < 140 mmHg (individualizar). Risco aumentado de hipotensão, quedas e injúria renal. Evitar politerapia desnecessária.'
+      });
+    }
+  }
+
+  // --- DPOC / broncoespasmo (não coletado diretamente, mas BB geral pode causar) ---
+  // Alerta genérico na etapa de BB
+  if (etapa === 'adicao_progressiva') {
+    alertas.push({
+      tipo: 'amarelo',
+      icone: '🫁',
+      titulo: 'Betabloqueadores — verificar antes de prescrever',
+      corpo: 'Contraindicados em: broncoespasmo/asma grave, bloqueio AV > 1º grau, bradicardia (FC < 50 bpm). Na DPOC leve-moderada: preferir betabloqueadores cardiosseletivos (bisoprolol, metoprolol, atenolol) em doses baixas.'
+    });
+  }
+
+  if (alertas.length === 0) return '';
+
+  return alertas.map(a => `
+    <div class="info-box ${a.tipo}" style="margin-bottom:8px;">
+      <strong>${a.icone} ${a.titulo}:</strong><br>${a.corpo}
+    </div>
+  `).join('');
+}
+
+// ============================================================
+// MEDICAMENTOS POR ETAPA (com BB proativo quando indicado)
+// ============================================================
+function gerarMedsEtapa(classes, indicaBB, d) {
+  let html = '<div style="margin-top:12px;"><div class="card-secao">Medicamentos desta etapa</div>';
+  let classesExibir = [...classes];
+  if (indicaBB && !classesExibir.includes('betabloqueadores')) classesExibir.push('betabloqueadores');
+
+  classesExibir.forEach(classeKey => {
+    const cls = MEDICAMENTOS[classeKey];
+    if (!cls) return;
+
+    // Destaque especial para BB quando obrigatório
+    const bbDestaque = (classeKey === 'betabloqueadores' && indicaBB)
+      ? ' style="border-left-color:#e65100;"'
+      : '';
+    const bbLabel = (classeKey === 'betabloqueadores' && indicaBB)
+      ? '<span style="font-size:10px;background:#e65100;color:white;border-radius:4px;padding:1px 6px;margin-left:6px;">possível neste paciente</span>'
+      : '';
+
+    html += `<div class="med-classe"${bbDestaque}>
+      <div class="med-classe-titulo">${cls.classe}${bbLabel}</div>
+      <div class="med-classe-desc">${cls.mecanismo}</div>`;
+
+    if (cls.indicacoes_especificas) {
+      html += `<div class="info-box amarelo" style="margin-bottom:8px;font-size:11px;"><strong>Indicações específicas:</strong> ${cls.indicacoes_especificas}</div>`;
+    }
+    if (cls.contraindicacoes_gerais) {
+      html += `<div class="info-box vermelho" style="margin-bottom:8px;font-size:11px;"><strong>Contraindicações gerais:</strong> ${cls.contraindicacoes_gerais}</div>`;
+    }
+
+    // Alerta para BCC em ICFEr — só dispara se ICFEr foi EXPLICITAMENTE marcado
+    if (classeKey === 'bcc' && d.ccICFEr) {
+      html += `<div class="info-box vermelho" style="margin-bottom:8px;font-size:11px;">⚠️ <strong>ICFEr confirmada:</strong> Verapamil e diltiazem (não di-hidropiridínicos) são CONTRAINDICADOS. Use apenas BCCs di-hidropiridínicos (anlodipino, felodipino, lercanidipino etc.).</div>`;
+    }
+
+    // Alerta IECA/BRA em gestação
+    if ((classeKey === 'ieca' || classeKey === 'bra') && d.gestacao === 'sim') {
+      html += `<div class="info-box vermelho" style="margin-bottom:8px;font-size:11px;">🤰 <strong>ATENÇÃO — IECA e BRA CONTRAINDICADOS nesta paciente.</strong> Risco de malformações fetais graves e complicações na gestação (categoria X). Use preferencialmente metildopa (1ª escolha na gestação), anlodipino ou hidralazina. Betabloqueadores (atenolol, metoprolol) também podem ser considerados neste perfil.</div>`;
+    }
+
+    cls.medicamentos.forEach((med, idx) => {
+      // Marcar fármacos problemáticos contextualmente
+      let alertaMed = '';
+      const gestacaoRisco = d.gestacao === 'sim' && (classeKey === 'ieca' || classeKey === 'bra');
+      const icferRisco = d.ccICFEr && (med.nome === 'Verapamil' || med.nome === 'Diltiazem');
+
+      if (gestacaoRisco) {
+        alertaMed = `<div style="font-size:10px;background:#c0392b;color:white;border-radius:4px;padding:2px 6px;display:inline-block;margin-top:2px;">⚠️ Contraindicado na gestação</div>`;
+      }
+      if (icferRisco) {
+        alertaMed = `<div style="font-size:10px;background:#c0392b;color:white;border-radius:4px;padding:2px 6px;display:inline-block;margin-top:2px;">⚠️ Contraindicado na ICFEr</div>`;
+      }
+
+      const medId = `med-${classeKey}-${idx}-${Math.random().toString(36).slice(2,6)}`;
+      html += `
+        <div class="med-item" id="${medId}">
+          <div class="med-item-header" onclick="document.getElementById('${medId}').classList.toggle('aberto')">
+            <div>
+              <div class="med-nome">${med.nome}${med.sus ? ' <span style="font-size:10px;background:#1a7a4a;color:white;border-radius:4px;padding:1px 5px;">SUS</span>' : ''}</div>
+              <div class="med-dose-resumo">${med.dose} · ${med.frequencia}</div>
+              ${alertaMed}
+            </div>
+            <div class="med-seta">▼</div>
+          </div>
+          <div class="med-detalhe">
+            <div class="med-info-row"><div class="med-info-label">Dose diária</div><div class="med-info-val">${med.dose}</div></div>
+            <div class="med-info-row"><div class="med-info-label">Frequência</div><div class="med-info-val">${med.frequencia}</div></div>
+            <div class="med-info-row"><div class="med-info-label">Ef. colaterais</div><div class="med-info-val">${med.efeitosColaterais}</div></div>
+            <div class="med-alerta"><strong>⛔ Contraindicações:</strong> ${med.contraindicacoes}</div>
+            ${med.observacoes ? `<div class="med-ok"><strong>📌 Observações:</strong> ${med.observacoes}</div>` : ''}
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function gerarEtapasProgressao(d, bbObrigatorio, etapaInicio) {
+  const n2 = etapaInicio;      // dupla
+  const n3 = etapaInicio + 1;  // tripla
+  const n4 = etapaInicio + 2;  // 4º medicamento
+  const n5 = etapaInicio + 3;  // adição progressiva
+  return `
+    <div class="etapa">
+      <div class="etapa-header"><div class="etapa-numero">${n2}</div><div class="etapa-titulo-texto">Se meta não alcançada → Associação dupla (~60% controle)</div><div class="etapa-chevron">▼</div></div>
+      <div class="etapa-body">
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px;">Otimizar dose da monoterapia até a máxima tolerada antes de associar. Após, adicionar 2º medicamento, preferencialmente em comprimido único.</p>
+        <div class="info-box azul">💊 Combinações preferidas:<br>• IECA ou BRA + DIU tiazídico<br>• IECA ou BRA + BCC${bbObrigatorio ? '<br>• + BB possível (condição específica)' : ''}</div>
+        <div class="info-box vermelho">⛔ PROIBIDO: IECA + BRA juntos.</div>
+        ${gerarAlertasContextuais(d, 'dupla')}
+        ${gerarMedsEtapa(['diureticos_tiazidicos','bcc','ieca','bra'], bbObrigatorio, d)}
+      </div>
+    </div>
+    <div class="etapa">
+      <div class="etapa-header"><div class="etapa-numero">${n3}</div><div class="etapa-titulo-texto">Se meta não alcançada → Associação tripla (~90% controle)</div><div class="etapa-chevron">▼</div></div>
+      <div class="etapa-body">
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px;">Otimizar doses da dupla até as máximas toleradas. Acrescentar 3º medicamento, preferencialmente em comprimido único.</p>
+        <div class="info-box azul">💊 IECA ou BRA + BCC + DIU tiazídico${bbObrigatorio ? ' + BB possível' : ', BB se indicação específica'}.</div>
+        <div class="info-box amarelo">ℹ️ Se DIU for hidroclorotiazida sem controle: substituir por <strong>clortalidona ou indapamida</strong>.</div>
+        ${gerarAlertasContextuais(d, 'tripla')}
+        ${gerarMedsEtapa(['diureticos_tiazidicos','bcc','ieca','bra'], bbObrigatorio, d)}
+      </div>
+    </div>
+    <div class="etapa">
+      <div class="etapa-header"><div class="etapa-numero">${n4}</div><div class="etapa-titulo-texto">Se meta não alcançada → 4º medicamento: Espironolactona</div><div class="etapa-chevron">▼</div></div>
+      <div class="etapa-body">
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px;"><strong>Espironolactona</strong> é a 4ª escolha (25–100 mg/dia). Se efeitos adversos persistentes (ginecomastia, disfunção sexual), substituir por <strong>eplerenona</strong>.</p>
+        <div class="info-box azul">ℹ️ Considerar investigação de <strong>HA Resistente</strong> (≥ 3 anti-hipertensivos em doses máximas sem controle).</div>
+        ${gerarAlertasContextuais(d, 'quarto')}
+        ${gerarMedsEtapa(['diureticos_poupadores'], false, d)}
+      </div>
+    </div>
+    <div class="etapa">
+      <div class="etapa-header"><div class="etapa-numero">${n5}</div><div class="etapa-titulo-texto">Se meta ainda não alcançada → Adição progressiva</div><div class="etapa-chevron">▼</div></div>
+      <div class="etapa-body">
+        <p style="font-size:13px;line-height:1.7;margin-bottom:8px;">Adicionar classes progressivamente. Considerar encaminhamento a especialista.</p>
+        <div class="info-box vermelho">⚠️ <strong>HA Resistente/Refratária:</strong> Investigar causas secundárias e encaminhar a cardiologista ou nefrologista.</div>
+        ${gerarAlertasContextuais(d, 'adicao_progressiva')}
+        ${gerarMedsEtapa(['betabloqueadores','simpatoliticos_centrais','alfabloqueadores','vasodilatadores'], false, d)}
+      </div>
+    </div>
+  `;
+}
+
+
+function gerarSecaoMedicamentos(d) {
+  return ''; // Medicamentos agora estão dentro de cada etapa
+}
+
+
+// ============================================================
+// PDF — Exportação via download (sem window.open, evita bloqueio de popup)
+// ============================================================
+function gerarPDF() {
+  const d = dadosPaciente;
+  if (!d || !d.pas) { alert('Nenhuma avaliação disponível para exportar.'); return; }
+
+  const risco = riscoTextos[d.riscoCV] || riscoTextos['baixo'];
+  const perfil = JSON.parse(localStorage.getItem('has_perfil') || '{}');
+  const agora = new Date().toLocaleString('pt-BR');
+
+  const condutaEl = document.getElementById('resultado-conduta');
+  const condutaTexto = condutaEl ? condutaEl.innerText : '—';
+
+  const fr = [];
+  if (d.sexo === 'M' && d.idade > 55) fr.push('Sexo masc. > 55 anos');
+  if (d.sexo === 'F' && d.idade > 65) fr.push('Sexo fem. > 65 anos');
+  if (d.tabagismo) fr.push('Tabagismo');
+  if (d.dislipidemia) fr.push('Dislipidemia');
+  if (d.obesidade) fr.push('Obesidade');
+  if (d.hfPrematura) fr.push('HF DCV prematura');
+
+  const loa = [];
+  if (d.loaHVE) loa.push('HVE');
+  if (d.loaAlbuminuria) loa.push('Albuminúria');
+  if (d.loaITB) loa.push('ITB < 0,9');
+  if (d.loaCarotida) loa.push('Placa carotídea');
+  if (d.loaVOP) loa.push('VOP ≥ 10 m/s');
+  if (d.loaRetinopatia) loa.push('Retinopatia');
+
+  const dcv = [];
+  if (d.dcvCoronariana) dcv.push('DAC/Angina/pós-IAM');
+  if (d.dcvIC) dcv.push('Insuficiência cardíaca');
+  if (d.dcvAVC) dcv.push('AVC/AIT');
+  if (d.dcvFA) dcv.push('Fibrilação atrial');
+  if (d.dcvDAOP) dcv.push('DAOP');
+
+  const drcTextos = {
+    nenhum:'Sem DRC', G1G2:'G1-G2 (TFGe ≥ 60)', G3a:'G3a (TFGe 45-59)',
+    G3b:'G3b (TFGe 30-44)', G4:'G4 (TFGe 15-29)', G5:'G5 (diálise)'
+  };
+
+  const htmlConteudo = `<!DOCTYPE html>
+<html lang="pt-BR"><head><meta charset="UTF-8">
+<title>HAS Guia — Relatório</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;max-width:700px;margin:0 auto;padding:20px;font-size:12px;line-height:1.6;color:#2d3748}
+h1{color:#1a3a5c;font-size:18px;border-bottom:3px solid #1a3a5c;padding-bottom:6px;margin-bottom:14px}
+h2{color:#2563a8;font-size:13px;font-weight:bold;margin:16px 0 6px;padding-left:8px;border-left:3px solid #2563a8}
+.alerta{background:#fdf0ef;border:2px solid #c0392b;border-radius:6px;padding:8px 12px;color:#c0392b;font-size:11px;margin:10px 0;font-weight:bold}
+.secao{background:#f7f8fa;border-radius:6px;padding:10px 12px;margin-bottom:8px}
+.linha{display:flex;gap:8px;margin:3px 0;font-size:11px}
+.lab{color:#718096;min-width:155px}
+.val{font-weight:bold;color:#2d3748;flex:1}
+.val.alerta-val{color:#c0392b}
+.conduta{background:#f7f8fa;border-radius:6px;padding:12px;white-space:pre-wrap;font-size:11px;line-height:1.6;margin-top:6px}
+.rodape{margin-top:20px;font-size:9px;color:#a0aec0;border-top:1px solid #e2e8f0;padding-top:8px}
+@media print{body{padding:8px}button{display:none}}
+</style></head><body>
+<h1>🫀 HAS Guia — Relatório de Avaliação</h1>
+<div class="alerta">⚠️ AVISO LEGAL: Ferramenta educacional de apoio ao profissional de saúde. NÃO substitui avaliação médica. A prescrição é ato médico privativo. Os desenvolvedores não se responsabilizam por decisões clínicas baseadas neste relatório.</div>
+<h2>Profissional</h2>
+<div class="secao">
+<div class="linha"><span class="lab">Nome:</span><span class="val">${perfil.nome||'—'}</span></div>
+<div class="linha"><span class="lab">Profissão:</span><span class="val">${perfil.profissao||'—'}</span></div>
+<div class="linha"><span class="lab">Inscrição:</span><span class="val">${perfil.inscricao||'—'}</span></div>
+<div class="linha"><span class="lab">Data/Hora:</span><span class="val">${agora}</span></div>
+</div>
+<h2>Dados do Paciente</h2>
+<div class="secao">
+<div class="linha"><span class="lab">Pressão Arterial:</span><span class="val">${d.pas}/${d.pad} mmHg</span></div>
+<div class="linha"><span class="lab">Classificação PA:</span><span class="val">${d.paClassif?d.paClassif.texto:'—'}</span></div>
+<div class="linha"><span class="lab">Risco CV calculado:</span><span class="val">${risco.texto}</span></div>
+<div class="linha"><span class="lab">Idade / Sexo:</span><span class="val">${d.idade} anos / ${d.sexo==='M'?'Masculino':'Feminino'}</span></div>
+<div class="linha"><span class="lab">Diabetes Mellitus:</span><span class="val">${d.dm?'Sim':'Não'}</span></div>
+<div class="linha"><span class="lab">DRC:</span><span class="val">${drcTextos[d.drcEstagio]||'Sem DRC'}</span></div>
+<div class="linha"><span class="lab">Fatores de risco CV:</span><span class="val">${fr.length?fr.join(', '):'Nenhum'}</span></div>
+<div class="linha"><span class="lab">Lesão órgão-alvo:</span><span class="val">${loa.length?loa.join(', '):'Nenhuma'}</span></div>
+<div class="linha"><span class="lab">DCV estabelecida:</span><span class="val">${dcv.length?dcv.join(', '):'Não'}</span></div>
+${d.gestacao==='sim'?'<div class="linha"><span class="lab">Potencial gestacional:</span><span class="val alerta-val">Sim — IECA e BRA CONTRAINDICADOS</span></div>':''}
+${d.preventScore!=null?`<div class="linha"><span class="lab">Escore PREVENT:</span><span class="val">${d.preventScore}% em 10 anos</span></div>`:''}
+</div>
+<h2>Conduta Sugerida</h2>
+<div class="conduta">${condutaTexto}</div>
+<div class="rodape">
+Gerado pelo aplicativo HAS Guia. Baseado na Diretriz Brasileira de Hipertensão Arterial 2025 — SBC/SBH/SBN. Arq Bras Cardiol. 2025;122(9):e20250624.<br>
+Os desenvolvedores não se responsabilizam por decisões clínicas baseadas exclusivamente neste relatório.
+</div>
+</body></html>`;
+
+  // Abre nova aba com o relatório — window.open direto no clique do botão é sempre permitido
+  // Remove overlay anterior
+  const anteriorOverlay = document.getElementById('pdf-overlay');
+  if (anteriorOverlay) anteriorOverlay.remove();
+
+  // Armazena HTML para uso no clique
+  window._pdfConteudo = htmlConteudo;
+
+  const overlay = document.createElement('div');
+  overlay.id = 'pdf-overlay';
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:99999;display:flex;align-items:center;justify-content:center;padding:20px;';
+  overlay.innerHTML = `
+    <div style="background:white;border-radius:16px;padding:28px 24px;max-width:380px;width:100%;text-align:center;font-family:Arial,sans-serif;">
+      <div style="font-size:44px;margin-bottom:10px;">📄</div>
+      <div style="font-size:17px;font-weight:700;color:#1a3a5c;margin-bottom:8px;">Relatório pronto</div>
+      <div style="font-size:13px;color:#718096;line-height:1.6;margin-bottom:20px;">
+        Clique no botão abaixo para abrir o relatório.<br>
+        Na nova aba, use <strong>Ctrl+P</strong> (PC) ou<br>
+        <strong>Compartilhar → Imprimir</strong> (celular)<br>
+        para salvar como PDF.
+      </div>
+      <button id="pdf-abrir"
+        style="width:100%;background:linear-gradient(135deg,#1a3a5c,#2563a8);color:white;border:none;border-radius:10px;padding:16px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:10px;">
+        🖨️ Abrir relatório
+      </button>
+      <button id="pdf-fechar"
+        style="width:100%;background:white;color:#c0392b;border:2px solid #c0392b;border-radius:10px;padding:13px;font-size:14px;font-weight:600;cursor:pointer;">
+        ✕ Fechar
+      </button>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  // Abre no clique — direto, sem setTimeout, sempre permitido pelo browser
+  document.getElementById('pdf-abrir').onclick = function() {
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(window._pdfConteudo);
+      w.document.close();
+      // Tenta imprimir automaticamente após carregar
+      w.onload = function() { try { w.print(); } catch(e) {} };
+      setTimeout(function() { try { w.focus(); w.print(); } catch(e) {} }, 800);
+    } else {
+      alert('Seu navegador bloqueou a abertura da nova aba. Permita pop-ups para este site e tente novamente.');
+    }
+    overlay.remove();
+  };
+
+  document.getElementById('pdf-fechar').onclick = function() {
+    overlay.remove();
+  };
+
+  overlay.addEventListener('click', function(e) {
+    if (e.target === overlay) overlay.remove();
+  });
+}
+
+
+
+
+// ============================================================
+// SERVICE WORKER (offline)
+// ============================================================
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
